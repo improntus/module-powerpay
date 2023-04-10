@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <payment>
+            <powerpay>
+                <active>1</active>
+                <model>PowerPay</model>
+                <order_status>pending</order_status>
+                <title>PowerPay</title>
+                <currency>PEN</currency>
+                <can_authorize>0</can_authorize>
+                <can_capture>0</can_capture>
+                <can_void>0</can_void>
+                <can_use_checkout>1</can_use_checkout>
+                <is_gateway>0</is_gateway>
+                <sandbox>1</sandbox>
+            </powerpay>
+        </payment>
+    </default>
+</config>
