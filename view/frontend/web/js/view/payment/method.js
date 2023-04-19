@@ -11,7 +11,7 @@ define(
         rendererList
     ) {
         'use strict';
-        let type = 'improntus_powerpay';
+        let type = 'powerpay';
         if(window.checkoutConfig.payment[type].active) {
             rendererList.push(
                 {

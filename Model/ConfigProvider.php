@@ -1,9 +1,10 @@
 <?php
-namespace Improntus\PowerPay\Model\Ui;
+namespace Improntus\PowerPay\Model;
 
 use Improntus\PowerPay\Helper\Data as PowerPayHelper;
 use Magento\Checkout\Model\ConfigProviderInterface;
 use Magento\Framework\View\Asset\Repository as AssetRepository;
+
 /**
  * Class ConfigProvider
  */
@@ -35,6 +36,7 @@ class ConfigProvider implements ConfigProviderInterface
             'payment' => [
                 self::CODE => [
                     'active' => $this->powerPayHelper->isActive() && $this->powerPayHelper->validateCredentials(),
+                    'order_create_url' => $this->powerPayHelper->getCreateUrl(),
                     'title' => $this->powerPayHelper->getTitle(),
                     'banner' => $this->assetRepository->getUrl("Improntus_PowerPay::images/PowerPay-Logo.png")
                 ]

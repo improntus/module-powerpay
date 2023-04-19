@@ -5,6 +5,7 @@ namespace Improntus\PowerPay\Helper;
 use Magento\Framework\Encryption\EncryptorInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Improntus\PowerPay\Logger\Logger;
+use Magento\Store\Model\StoreManagerInterface;
 
 class Data
 {
@@ -17,7 +18,14 @@ class Data
     const ACTIVE = 'active';
     const TITLE = 'title';
     const DEBUG = 'debug';
+    const MERCHANT_ID = 'merchant_id';
+    const CONCEPT = 'concept';
 
+    const EP_MERCHANT_TRANSACTIONS = 'merchant-transactions';
+
+    /**
+     * @var Logger
+     */
     private $logger;
 
     /**
@@ -31,6 +39,11 @@ class Data
     private $scopeConfig;
 
     /**
+     * @var StoreManagerInterface
+     */
+    private $storeManager;
+
+    /**
      *
      * /**
      * @param EncryptorInterface $encryptor
@@ -39,9 +52,11 @@ class Data
     public function __construct(
         EncryptorInterface $encryptor,
         ScopeConfigInterface $scopeConfig,
-        Logger $logger
+        Logger $logger,
+        StoreManagerInterface $storeManager
     )
     {
+        $this->storeManager = $storeManager;
         $this->logger = $logger;
         $this->encryptor = $encryptor;
         $this->scopeConfig = $scopeConfig;
@@ -60,6 +75,16 @@ class Data
             return $this->encryptor->decrypt($this->scopeConfig->getValue($path, \Magento\Store\Model\ScopeInterface::SCOPE_STORE, $storeId) ?? '');
         }
         return $this->scopeConfig->getValue($path, \Magento\Store\Model\ScopeInterface::SCOPE_STORE, $storeId) ?? '';
+    }
+
+    /**
+     * @param string $path
+     * @return string
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    private function getUrl($path)
+    {
+        return $this->storeManager->getStore()->getUrl($path);
     }
 
     /**
@@ -85,26 +110,75 @@ class Data
     /**
      * @return mixed|string
      */
-    public function getTitle()
+    public function getTitle($storeId = null)
     {
-        return $this->getConfigData($this::TITLE);
-    }
-
-    public function isDebugEnabled()
-    {
-        return $this->getConfigData($this::DEBUG);
+        return $this->getConfigData($this::TITLE, $storeId);
     }
 
     /**
+     * @return mixed|string
+     */
+    public function getSecret($storeId = null)
+    {
+        return $this->getConfigData($this::SECRET, $storeId);
+    }
+
+    /**
+     * @return mixed|string
+     */
+    public function getClientId($storeId = null)
+    {
+        return $this->getConfigData($this::CLIENTID, $storeId);
+    }
+    /**
+     * @return mixed|string
+     */
+    public function isDebugEnabled($storeId = null)
+    {
+        return $this->getConfigData($this::DEBUG, $storeId);
+    }
+
+    public function getCreateUrl()
+    {
+        return $this->getUrl('powerpay/order/create');
+    }
+
+    public function getCallBackUrl()
+    {
+        return $this->getUrl('powerpay/order/response');
+    }
+
+    /**
+     * @param $storeId
+     * @return mixed|string
+     */
+    public function getMerchantId($storeId = null)
+    {
+        return $this->getConfigData($this::MERCHANT_ID, $storeId);
+    }
+
+    public function getPaymentConcept($storeId = null)
+    {
+        return $this->getConfigData($this::CONCEPT, $storeId);
+    }
+    /**
+     * @param $storeId
+     * @return string
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    public function getCompanyName($storeId = null)
+    {
+        return $this->storeManager->getStore($storeId)->getName();
+    }
+    /**
      * @param $message
-     * @return true
+     * @return void
      */
     public function log($message)
     {
-        if($this->isDebugEnabled()) {
-            $this->logger->setName('modo_payments.log');
+        if ($this->isDebugEnabled()) {
+            $this->logger->setName('powerpay_payments.log');
             $this->logger->info($message);
         }
-        return true;
     }
 }

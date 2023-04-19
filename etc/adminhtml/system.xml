@@ -45,11 +45,17 @@
                 </field>
                 <field id="secret" translate="label" type="obscure" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Secret</label>
-                    <comment>
-                        REST API secret key.
-                    </comment>
                     <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
                     <config_path>payment/powerpay/secret</config_path>
+                </field>
+                <field id="merchant_id" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Merchant ID</label>
+                    <config_path>payment/powerpay/merchant_id</config_path>
+                </field>
+                <field id="concept" translate="label" type="text" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <config_path>payment/powerpay/concept</config_path>
+                    <label>Concepto</label>
+                    <comment>El concepto de la venta (electrodomesticos, ropa, etc).</comment>
                 </field>
                 <field id="sort_order" translate="label" type="text" sortOrder="160" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Sort Order</label>

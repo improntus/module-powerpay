@@ -1,0 +1,223 @@
+<?php
+
+namespace Improntus\PowerPay\Model;
+
+use Improntus\PowerPay\Model\Rest\WebService;
+use Improntus\PowerPay\Helper\Data;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Sales\Api\Data\TransactionInterface;
+use Magento\Sales\Api\InvoiceManagementInterface;
+use Magento\Sales\Api\InvoiceRepositoryInterface;
+use Magento\Sales\Api\OrderPaymentRepositoryInterface;
+use Magento\Sales\Api\OrderRepositoryInterface;
+use Magento\Sales\Api\TransactionRepositoryInterface as PaymentTransactionRepository;
+use Magento\Sales\Model\Order\Email\Sender\OrderSender;
+use Improntus\PowerPay\Api\TransactionRepositoryInterface;
+use Improntus\PowerPay\Model\TransactionFactory;
+
+class PowerPay
+{
+    private $transactionFactory;
+    private $transactionRepository;
+    /**
+     * @var OrderSender
+     */
+    private $orderSender;
+
+    /**
+     * @var InvoiceRepositoryInterface
+     */
+    private $invoiceRepository;
+    /**
+     * @var PaymentTransactionRepository
+     */
+    private $paymentTransactionRepository;
+    /**
+     * @var OrderRepositoryInterface
+     */
+    private $orderRepository;
+    /**
+     * @var OrderPaymentRepositoryInterface
+     */
+    private $paymentRepository;
+    /**
+     * @var InvoiceManagementInterface
+     */
+    private $invoiceManagement;
+
+    /**
+     * @var WebService
+     */
+    private $ws;
+
+    /**
+     * @var Data
+     */
+    private $helper;
+
+    public function __construct(
+        WebService                      $ws,
+        Data                            $helper,
+        InvoiceManagementInterface      $invoiceManagement,
+        OrderPaymentRepositoryInterface $paymentRepository,
+        OrderRepositoryInterface        $orderRepository,
+        PaymentTransactionRepository    $paymentTransactionRepository,
+        InvoiceRepositoryInterface      $invoiceRepository,
+        OrderSender                     $orderSender,
+        TransactionRepositoryInterface $transactionRepository,
+        TransactionFactory $transactionFactory,
+    )
+    {
+        $this->transactionFactory = $transactionFactory;
+        $this->transactionRepository = $transactionRepository;
+        $this->orderSender = $orderSender;
+        $this->invoiceRepository = $invoiceRepository;
+        $this->paymentTransactionRepository = $paymentTransactionRepository;
+        $this->orderRepository = $orderRepository;
+        $this->paymentRepository = $paymentRepository;
+        $this->invoiceManagement = $invoiceManagement;
+        $this->helper = $helper;
+        $this->ws = $ws;
+    }
+
+    /**
+     * @param $order
+     * @return false|mixed|string
+     * @throws LocalizedException
+     * @throws NoSuchEntityException
+     */
+    public function createTransaction($order)
+    {
+        $data = $this->getRequestData($order);
+        try {
+            $response = $this->ws->doRequest($this->helper::EP_MERCHANT_TRANSACTIONS, null, $this->helper->getSecret(), $data);
+        } catch (\Exception $e) {
+            $this->helper->log($e->getMessage());
+            throw new \Exception($e->getMessage());
+        }
+        return $response ?? false;
+    }
+
+    /**
+     * @param $order
+     * @return array
+     * @throws LocalizedException
+     * @throws NoSuchEntityException
+     */
+    private function getRequestData($order)
+    {
+        $customerData = $this->getCustomerData($order);
+        return [
+            'external_id' => $order->getIncrementId(),
+            'callback_url' => $this->helper->getCallBackUrl(),
+            'values' => [
+                'merchant_id' => $this->helper->getMerchantId($order->getStoreId()),
+                'company_name' => $this->helper->getCompanyName($order->getStoreId()),
+                'currency' => 'PEN',
+                'document_number' => $customerData['document_number'],
+                'document_type' => 'DNI',
+                'first_name' => $customerData['first_name'],
+                'last_name' => $customerData['last_name'],
+//                'email' => $customerData['email'],
+                'country_code' => '+51',
+                'phone_number' => $customerData['phone_number'],
+                'payment_concept' => $this->helper->getPaymentConcept($order->getStoreId()),
+                'shipping_postal_code' => $customerData['shipping_postal_code'],
+                'shipping_address' => $customerData['shipping_address'],
+            ],
+            'amount' => round($order->getGrandTotal(), 2)
+        ];
+    }
+
+    /**
+     * @param $order
+     * @return array
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
+    private function getCustomerData($order)
+    {
+        $address = $order->getShippingAddress();
+        return [
+            'document_number' => $order->getCustomerTaxvat() ?? '',
+            'first_name' => $address->getFirstname(),
+            'last_name' => $address->getLastname(),
+            'email' => $order->getCustomerEmail(),
+            'phone_number' => $address->getTelephone() ?? '',
+            'shipping_postal_code' => $address->getPostcode() ?? '',
+            'shipping_address' => "{$address->getStreet()[0]} {$address->getStreet()[1]}",
+        ];
+    }
+
+    /**
+     * @param $order
+     * @param $transactionId
+     * @return bool
+     */
+    public function invoice($order, $transactionId)
+    {
+        if (!$order->canInvoice() || $order->hasInvoices()) {
+            return false;
+        }
+        try {
+            $invoice = $this->invoiceManagement->prepareInvoice($order);
+            $invoice->register();
+            $this->orderRepository->save($order);
+            $invoice->setTransactionId($transactionId);
+            $payment = $order->getPayment();
+            $this->paymentRepository->save($payment);
+            $transaction = $this->generateTransaction($payment, $invoice, $transactionId);
+            $transaction->setAdditionalInformation('amount', round($order->getGrandTotal(), 2));
+            $transaction->setAdditionalInformation('currency', 'PEN');
+            $this->paymentTransactionRepository->save($transaction);
+
+            if (!$order->getEmailSent()) {
+                $this->orderSender->send($order);
+                $order->setIsCustomerNotified(true);
+            }
+            $invoice->pay();
+            $invoice->getOrder()->setIsInProcess(true);
+            $payment->addTransactionCommentsToOrder($transaction, __('PowerPay'));
+            $this->invoiceRepository->save($invoice);
+            $this->orderRepository->save($order);
+
+            return true;
+        } catch (\Exception $e) {
+            $this->helper->log($e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * @param $payment
+     * @param $invoice
+     * @param $paypalTransaction
+     * @return mixed
+     */
+    private function generateTransaction($payment, $invoice, $transactionId)
+    {
+        $payment->setTransactionId($transactionId);
+        return $payment->addTransaction(TransactionInterface::TYPE_CAPTURE, $invoice, true);
+    }
+
+
+    /**
+     * @param $order
+     * @param $powerPayData
+     * @return bool
+     * @throws LocalizedException
+     */
+    public function persistTransaction($order, $result) {
+        if (!$this->transactionRepository->getByOrderId($order->getId())) {
+            $transaction = $this->transactionFactory->create();
+            $transaction->setOrderId($order->getId());
+            $transaction->setPowerPayTransactionId($result['id'] ?? '');
+            $transaction->setStatus($result['status'] ?? '');
+            $transaction->setCreatedAt($result['created_at'] ?? '');
+            $transaction->setExpiredAt($result['expired_at'] ?? '');
+            $this->transactionRepository->save($transaction);
+            return true;
+        }
+        return false;
+    }
+}

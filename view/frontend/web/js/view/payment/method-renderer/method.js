@@ -16,14 +16,28 @@ define([
     'use strict';
     return Component.extend({
         defaults: {
-            template: 'Improntus_PowerPay/payment/method'
+            template: 'Improntus_PowerPay/payment/method',
+            code: 'powerpay',
+            active: false
         },
+
+        getCode: function() {
+            return this.code;
+        },
+
+        getTitle: function () {
+            return window.checkoutConfig.payment[this.getCode()].title;
+        },
+
         getBanner: function () {
-            return window.checkoutConfig.powerpay.banner;
+            console.log(this.getCode());
+            return window.checkoutConfig.payment[this.getCode()].banner;
         },
+
         afterPlaceOrder: function () {
-            window.location.href = window.checkoutConfig.powerpay.create_transaction_url;
+            window.location.href = window.checkoutConfig.payment[this.getCode()].order_create_url;
         },
+
         placeOrder: function (data, event) {
             let self = this;
             if (event) {

@@ -2,6 +2,11 @@
 
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
 
+    <preference for="Improntus\PowerPay\Api\CallbackInterface" type="Improntus\PowerPay\Model\Api\Callback"/>
+    <preference for="Improntus\PowerPay\Api\TransactionRepositoryInterface" type="Improntus\PowerPay\Model\TransactionRepository"/>
+    <preference for="Improntus\PowerPay\Api\Data\TransactionInterface" type="Improntus\PowerPay\Model\Transaction"/>
+    <preference for="Improntus\PowerPay\Api\Data\TransactionSearchResultsInterface" type="Magento\Framework\Api\SearchResults"/>
+
     <type name="Magento\Config\Model\Config\TypePool">
         <arguments>
             <argument name="sensitive" xsi:type="array">
@@ -13,17 +18,25 @@
 
     <virtualType name="PowerPay" type="Magento\Payment\Model\Method\Adapter">
         <arguments>
-            <argument name="code" xsi:type="const">Improntus\PowerPay\Model\Ui\ConfigProvider::CODE</argument>
+            <argument name="code" xsi:type="const">Improntus\PowerPay\Model\ConfigProvider::CODE</argument>
             <argument name="formBlockType" xsi:type="string">Magento\Payment\Block\Form</argument>
             <argument name="infoBlockType" xsi:type="string">Magento\Payment\Block\Info</argument>
             <argument name="valueHandlerPool" xsi:type="object">PowerPayValueHandlerPool</argument>
-<!--            <argument name="commandPool" xsi:type="object">Magento\Payment\Gateway\Command\CommandPool</argument>-->
+            <argument name="validatorPool" xsi:type="object">PowerPayValidatorPool</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="PowerPayValidatorPool" type="Magento\Payment\Gateway\Validator\ValidatorPool">
+        <arguments>
+            <argument name="validators" xsi:type="array">
+                <item name="currency" xsi:type="string">Improntus\PowerPay\Gateway\Validator\CurrencyValidator</item>
+            </argument>
         </arguments>
     </virtualType>
 
     <virtualType name="PowerPayConfig" type="Magento\Payment\Gateway\Config\Config">
         <arguments>
-            <argument name="methodCode" xsi:type="const">Improntus\PowerPay\Model\Ui\ConfigProvider::CODE</argument>
+            <argument name="methodCode" xsi:type="const">Improntus\PowerPay\Model\ConfigProvider::CODE</argument>
         </arguments>
     </virtualType>
 
@@ -42,10 +55,31 @@
             </argument>
         </arguments>
     </virtualType>
+
     <virtualType name="PowerPayConfigValueHandler" type="Magento\Payment\Gateway\Config\ConfigValueHandler">
         <arguments>
             <argument name="configInterface" xsi:type="object">PowerPayConfig</argument>
         </arguments>
     </virtualType>
+
+    <type name="Improntus\PowerPay\Logger\Logger">
+        <arguments>
+            <argument name="name" xsi:type="string">powerpay</argument>
+            <argument name="handlers" xsi:type="array">
+                <item name="system" xsi:type="object">Improntus\PowerPay\Logger\Handler\CustomHandler</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <type name="Improntus\PowerPay\Controller\Order\Create">
+        <arguments>
+            <argument name="session" xsi:type="object">Magento\Checkout\Model\Session\Proxy</argument>
+        </arguments>
+    </type>
+    <type name="Improntus\PowerPay\Controller\Order\Response">
+        <arguments>
+            <argument name="session" xsi:type="object">Magento\Checkout\Model\Session\Proxy</argument>
+        </arguments>
+    </type>
 
 </config>

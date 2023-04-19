@@ -30,7 +30,7 @@ class WebService
     {
         $this->helper = $helper;
         $this->curl = $curl;
-        $this->baseUrl = 'https://api.powerpay.pe/api/merchant-transactions/';
+        $this->baseUrl = 'https://api.powerpay.pe/api/';
     }
 
     public function doRequest($endpoint, $clientId, $secret,  $data=null, $method=null, $storeId = null, $options=null)
@@ -40,7 +40,7 @@ class WebService
         }
 
         if ($this->helper->getConfigData($this->helper::SANDBOX, $storeId)) {
-            $this->baseUrl = 'https://mo-services-bbva-bnpl-pe-beta.moprestamo.com/api/merchant-transactions/';
+            $this->baseUrl = 'https://mo-services-bbva-bnpl-pe-beta.moprestamo.com/api/';
         }
 
         $url = $this->baseUrl . $endpoint;
@@ -70,6 +70,7 @@ class WebService
 
             return json_decode($this->curl->getBody(), true);
         } catch (\Exception $e) {
+            $this->helper->log($e->getMessage());
             return $e->getMessage();
         }
     }
