@@ -21,6 +21,7 @@ class Data
     const DEBUG = 'debug';
     const MERCHANT_ID = 'merchant_id';
     const CONCEPT = 'concept';
+    const CANCEL_HOURS = 'cancel_hours';
 
     const EP_MERCHANT_TRANSACTIONS = 'merchant-transactions';
 
@@ -147,11 +148,10 @@ class Data
      * @return string
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
-    public function getCreateUrl()
+    public function getRedirectUrl()
     {
         return $this->getUrl('powerpay/order/create');
     }
-
     /**
      * @param $token
      * @return string
@@ -191,6 +191,11 @@ class Data
     public function getCompanyName($storeId = null)
     {
         return $this->storeManager->getStore($storeId)->getName();
+    }
+
+    public function getCancelHours($storeId = null)
+    {
+        return $this->getConfigData($this::CANCEL_HOURS, $storeId);
     }
     /**
      * @param $message

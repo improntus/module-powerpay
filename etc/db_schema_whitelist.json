@@ -1,0 +1,16 @@
+{
+    "powerpay_transaction": {
+        "column": {
+            "entity_id": true,
+            "order_id": true,
+            "transaction_id": true,
+            "status": true,
+            "created_at": true,
+            "expired_at": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "POWERPAY_TRANSACTION_ORDER_ID": true
+        }
+    }
+}

@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Cron:etc/crontab.xsd">
+    <group id="powerpay">
+        <job name="powerpay_cancel_pending" instance="Improntus\PowerPay\Cron\CancelOrder" method="cancelPending">
+            <schedule>*/5 * * * *</schedule>
+        </job>
+        <job name="powerpay_cancel_expired" instance="Improntus\PowerPay\Cron\CancelOrder" method="cancelExpired">
+            <schedule>*/5 * * * *</schedule>
+        </job>
+    </group>
+</config>

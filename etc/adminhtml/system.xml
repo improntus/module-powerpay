@@ -10,10 +10,10 @@
         <section id="payment">
             <group id="powerpay" translate="label" type="text" sortOrder="15" showInDefault="1" showInWebsite="1" showInStore="1">
                 <fieldset_css>powerpay</fieldset_css>
+                <frontend_model>Magento\Paypal\Block\Adminhtml\System\Config\Fieldset\Payment</frontend_model>
                 <comment>
-                    <![CDATA[<div class="powerpay-payment-logo"></div>]]>
+                    <![CDATA[<div class="powerpay-payment-logo"></div><div class="powerpay-payment-text">Incrementa tu conversion rate con pagos financiados por <strong>PowerPay.</strong></div>]]>
                 </comment>
-                <label>PowerPay</label>
                 <field id="credentials_status" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1"
                        showInStore="1">
                     <label>Estado de credenciales</label>
@@ -62,11 +62,11 @@
                     <frontend_class>validate-number</frontend_class>
                     <config_path>payment/improntus_paypal/sort_order</config_path>
                 </field>
-                <field id="cancel_minutes" translate="label" type="text" sortOrder="170" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Cancel order after X minutes</label>
+                <field id="cancel_hours" translate="label" type="text" sortOrder="170" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Cancel order after X hours</label>
                     <frontend_class>validate-number</frontend_class>
-                    <config_path>payment/powerpay/cancel_minutes</config_path>
-                    <comment>Set the time an order can stay as pending without payment confirmation before getting canceled. (Default value is 60)</comment>
+                    <config_path>payment/powerpay/cancel_hours</config_path>
+                    <comment>Pending orders will be canceled after the amount of hours configured. (Default is 24hs)</comment>
                 </field>
             </group>
         </section>

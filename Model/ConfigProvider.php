@@ -36,9 +36,9 @@ class ConfigProvider implements ConfigProviderInterface
             'payment' => [
                 self::CODE => [
                     'active' => $this->powerPayHelper->isActive() && $this->powerPayHelper->validateCredentials(),
-                    'order_create_url' => $this->powerPayHelper->getCreateUrl(),
+                    'redirect_url' => $this->powerPayHelper->getRedirectUrl(),
                     'title' => $this->powerPayHelper->getTitle(),
-                    'banner' => $this->assetRepository->getUrl("Improntus_PowerPay::images/PowerPay-Logo.png")
+                    'banner' => $this->assetRepository->getUrl("Improntus_PowerPay::images/PowerPay-Logo.svg")
                 ]
             ],
         ];

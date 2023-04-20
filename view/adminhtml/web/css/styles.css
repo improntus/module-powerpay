@@ -1,7 +1,7 @@
-.powerpay .powerpay-payment-logo {background: url("../images/powerpay-logo.png")  no-repeat 0 0% / 16rem auto;
+.powerpay .powerpay-payment-logo {background: url("../images/PowerPay-Logo.svg")  no-repeat 0 0% / 16rem auto;
     height: 50px; width: auto; padding-left: 20rem; display:inline-block; vertical-align: middle;}
 .powerpay .button-container {float: right;}
-.powerpay .powerpay-payment-text { display: inline-block; vertical-align: middle; width: 50%}
+.powerpay .powerpay-payment-text { display: inline-block; vertical-align: middle; width: 65%}
 .powerpay.section-config.active > .admin__collapsible-block + input + fieldset { margin-left:0; }
 .accordion .form-inline .config .value{line-height: 25px;}
 .powerpay.section-config.active > .admin__collapsible-block .control-value span{border-radius:5px;padding:8px 15px 8px 12px;}

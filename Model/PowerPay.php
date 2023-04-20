@@ -183,7 +183,12 @@ class PowerPay
             $invoice->getOrder()->setIsInProcess(true);
             $payment->addTransactionCommentsToOrder($transaction, __('PowerPay'));
             $this->invoiceRepository->save($invoice);
+            $message = (__('Payment confirmed by PowerPay'));
+            $order->addCommentToStatusHistory($message, Order::STATE_PROCESSING);
             $this->orderRepository->save($order);
+            $ppTransaction = $this->transactionRepository->get($transactionId);
+            $ppTransaction->setStatus('processed');
+            $this->transactionRepository->save($ppTransaction);
 
             return true;
         } catch (\Exception $e) {
@@ -217,11 +222,12 @@ class PowerPay
         } else {
             $transactionId = $result['transaction_id'];
         }
+        $status = strtolower($result['status'] ?? '');
         if (!$this->transactionRepository->getByOrderId($order->getId())) {
             $transaction = $this->transactionFactory->create();
             $transaction->setOrderId($order->getId());
             $transaction->setPowerPayTransactionId($transactionId ?? '');
-            $transaction->setStatus($result['status'] ?? '');
+            $transaction->setStatus($status);
             if (isset($result['created_at'])) {
                 $transaction->setCreatedAt($result['created_at']);
             }
@@ -229,7 +235,7 @@ class PowerPay
             $this->transactionRepository->save($transaction);
         } else {
             $transaction = $this->transactionRepository->get($transactionId);
-            $transaction->setStatus($result['status']);
+            $transaction->setStatus($status);
             $transaction->setExpiredAt($result['expired_at'] ?? '');
             $this->transactionRepository->save($transaction);
         }

@@ -51,7 +51,7 @@ class Callback implements CallbackInterface
                 isset($data['signature'])
             ) {
                 $order = $this->powerPay->getOrderByTransactionId($data['id']);
-                if ($data['status'] == 'Processed') {
+                if (strtolower($data['status']) == 'processed') {
                     if ($this->powerPay->invoice($order, $data['id'])) {
                         return true;
                     } else {
@@ -69,6 +69,7 @@ class Callback implements CallbackInterface
 
     private function processCancel($order, $status)
     {
+        $status = strtolower($status);
         $message = (__('Order ' . $status . ' by PowerPay.'));
         if ($this->powerPay->cancelOrder($order, $message)) {
             return true;

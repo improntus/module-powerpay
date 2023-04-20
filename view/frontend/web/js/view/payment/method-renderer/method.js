@@ -30,12 +30,12 @@ define([
         },
 
         getBanner: function () {
-            console.log(this.getCode());
             return window.checkoutConfig.payment[this.getCode()].banner;
         },
 
         afterPlaceOrder: function () {
-            window.location.href = window.checkoutConfig.payment[this.getCode()].order_create_url;
+            fullScreenLoader.startLoader();
+            window.location.href = window.checkoutConfig.payment[this.getCode()].redirect_url;
         },
 
         placeOrder: function (data, event) {
@@ -54,7 +54,6 @@ define([
                     })
                     .always(function () {
                         self.isPlaceOrderActionAllowed(true);
-                        fullScreenLoader.stopLoader();
                     });
                 return true;
             }

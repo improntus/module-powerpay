@@ -4,8 +4,8 @@
                name="payment[method]"
                class="radio"
                data-bind="attr: {'id': getCode()}, value: getCode(), checked: isChecked, click: selectPaymentMethod, visible: isRadioButtonVisible()"/>
-        <div class="powerpay-payment-logo">
-            <img data-bind="attr: {alt: 'PowerPay Banner', src: getBanner()}" class="payment-banner-checkout" width="200" height="50"/>
+        <div class="powerpay-payment-logo" data-bind="click: selectPaymentMethod">
+            <img data-bind="attr: {alt: 'PowerPay Banner', src: getBanner()}" class="payment-banner-checkout" width="160px" height="40px"/>
         </div>
         <!--<label class="label" data-bind="attr: {'for': getCode()}">
             <span data-bind="text: getTitle()"></span>
