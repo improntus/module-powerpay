@@ -50,14 +50,30 @@ class Callback implements CallbackInterface
                 isset($data['created_at']) &&
                 isset($data['signature'])
             ) {
-                $order = $this->powerPay->getOrderByTransactionId();
+                $order = $this->powerPay->getOrderByTransactionId($data['id']);
                 if ($data['status'] == 'Processed') {
-//                    if ($this->powerPay->invoice())
+                    if ($this->powerPay->invoice($order, $data['id'])) {
+                        return true;
+                    } else {
+                        $response = new \Magento\Framework\Webapi\Exception(__('Order could not be invoiced.'));
+                    }
+                } else {
+                    return $this->processCancel($order, $data['status']);
                 }
             } else {
                 $response =  new \Magento\Framework\Webapi\Exception(__('Invalid request data.'));
             }
         }
         throw $response;
+    }
+
+    private function processCancel($order, $status)
+    {
+        $message = (__('Order ' . $status . ' by PowerPay.'));
+        if ($this->powerPay->cancelOrder($order, $message)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

@@ -5,6 +5,7 @@ namespace Improntus\PowerPay\Helper;
 use Magento\Framework\Encryption\EncryptorInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Improntus\PowerPay\Logger\Logger;
+use Magento\Sales\Model\Order;
 use Magento\Store\Model\StoreManagerInterface;
 
 class Data
@@ -78,12 +79,16 @@ class Data
     }
 
     /**
-     * @param string $path
+     * @param $path
+     * @param $params
      * @return string
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
-    private function getUrl($path)
+    private function getUrl($path, $params = null)
     {
+        if ($params) {
+            return $this->storeManager->getStore()->getUrl($path, $params);
+        }
         return $this->storeManager->getStore()->getUrl($path);
     }
 
@@ -138,13 +143,26 @@ class Data
         return $this->getConfigData($this::DEBUG, $storeId);
     }
 
+    /**
+     * @return string
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
     public function getCreateUrl()
     {
         return $this->getUrl('powerpay/order/create');
     }
 
-    public function getCallBackUrl()
+    /**
+     * @param $token
+     * @return string
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    public function getCallBackUrl($token = null)
     {
+        if ($token)
+        {
+            return $this->getUrl('powerpay/order/response', ['token' => $token]);
+        }
         return $this->getUrl('powerpay/order/response');
     }
 
@@ -157,6 +175,10 @@ class Data
         return $this->getConfigData($this::MERCHANT_ID, $storeId);
     }
 
+    /**
+     * @param $storeId
+     * @return mixed|string
+     */
     public function getPaymentConcept($storeId = null)
     {
         return $this->getConfigData($this::CONCEPT, $storeId);
@@ -180,5 +202,14 @@ class Data
             $this->logger->setName('powerpay_payments.log');
             $this->logger->info($message);
         }
+    }
+
+    /**
+     * @param Order $order
+     * @return string
+     */
+    public function generateToken($order)
+    {
+        return hash('sha256', $this->getSecret($order->getStoreId()) .  $order->getIncrementId() . $order->getCreatedAt());
     }
 }

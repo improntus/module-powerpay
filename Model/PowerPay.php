@@ -6,19 +6,22 @@ use Improntus\PowerPay\Model\Rest\WebService;
 use Improntus\PowerPay\Helper\Data;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\Phrase;
 use Magento\Sales\Api\Data\TransactionInterface;
 use Magento\Sales\Api\InvoiceManagementInterface;
 use Magento\Sales\Api\InvoiceRepositoryInterface;
 use Magento\Sales\Api\OrderPaymentRepositoryInterface;
 use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Sales\Api\TransactionRepositoryInterface as PaymentTransactionRepository;
+use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Email\Sender\OrderSender;
 use Improntus\PowerPay\Api\TransactionRepositoryInterface;
-use Improntus\PowerPay\Model\TransactionFactory;
 
 class PowerPay
 {
-    private $transactionFactory;
+    /**
+     * @var TransactionRepositoryInterface
+     */
     private $transactionRepository;
     /**
      * @var OrderSender
@@ -100,17 +103,18 @@ class PowerPay
     }
 
     /**
-     * @param $order
+     * @param Order $order
      * @return array
      * @throws LocalizedException
      * @throws NoSuchEntityException
      */
     private function getRequestData($order)
     {
+        $token = $this->helper->generateToken($order);
         $customerData = $this->getCustomerData($order);
         return [
             'external_id' => $order->getIncrementId(),
-            'callback_url' => $this->helper->getCallBackUrl(),
+            'callback_url' => $this->helper->getCallBackUrl($token),
             'values' => [
                 'merchant_id' => $this->helper->getMerchantId($order->getStoreId()),
                 'company_name' => $this->helper->getCompanyName($order->getStoreId()),
@@ -119,7 +123,7 @@ class PowerPay
                 'document_type' => 'DNI',
                 'first_name' => $customerData['first_name'],
                 'last_name' => $customerData['last_name'],
-//                'email' => $customerData['email'],
+                'email' => $customerData['email'],
                 'country_code' => '+51',
                 'phone_number' => $customerData['phone_number'],
                 'payment_concept' => $this->helper->getPaymentConcept($order->getStoreId()),
@@ -203,21 +207,66 @@ class PowerPay
 
     /**
      * @param $order
-     * @param $powerPayData
-     * @return bool
+     * @param $result
+     * @return void
      * @throws LocalizedException
      */
-    public function persistTransaction($order, $result) {
+    public function persistTransaction($order, $result, $flow = 'response') {
+        if ($flow !== 'response') {
+            $transactionId = $result['id'];
+        } else {
+            $transactionId = $result['transaction_id'];
+        }
         if (!$this->transactionRepository->getByOrderId($order->getId())) {
             $transaction = $this->transactionFactory->create();
             $transaction->setOrderId($order->getId());
-            $transaction->setPowerPayTransactionId($result['id'] ?? '');
+            $transaction->setPowerPayTransactionId($transactionId ?? '');
             $transaction->setStatus($result['status'] ?? '');
-            $transaction->setCreatedAt($result['created_at'] ?? '');
+            if (isset($result['created_at'])) {
+                $transaction->setCreatedAt($result['created_at']);
+            }
             $transaction->setExpiredAt($result['expired_at'] ?? '');
             $this->transactionRepository->save($transaction);
-            return true;
+        } else {
+            $transaction = $this->transactionRepository->get($transactionId);
+            $transaction->setStatus($result['status']);
+            $transaction->setExpiredAt($result['expired_at'] ?? '');
+            $this->transactionRepository->save($transaction);
+        }
+    }
+
+    /**
+     * @param Order $order
+     * @param Phrase $message
+     * @return bool
+     */
+    public function cancelOrder($order, $message)
+    {
+        try {
+            if ($order->canCancel()){
+                $order->cancel();
+                $order->setState(Order::STATE_CANCELED);
+                $order->addCommentToStatusHistory($message, Order::STATE_CANCELED);
+                $this->orderRepository->save($order);
+                return true;
+            }
+
+        } catch (\Exception $e) {
+            $this->helper->log($e->getMessage());
+            return false;
         }
         return false;
+    }
+
+    /**
+     * @param $id
+     * @return \Magento\Sales\Api\Data\OrderInterface
+     * @throws LocalizedException
+     */
+    public function getOrderByTransactionId($id)
+    {
+        $transaction = $this->transactionRepository->get($id);
+        if ($transaction->getStatus())
+        return $this->orderRepository->get($transaction->getOrderId());
     }
 }

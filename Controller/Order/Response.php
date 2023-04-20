@@ -6,9 +6,8 @@ use Magento\Checkout\Model\Session;
 use Magento\Framework\App\ActionInterface;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Exception\LocalizedException;
-use Magento\Framework\View\Result\PageFactory;
 use Improntus\PowerPay\Model\PowerPay;
-use Magento\Backend\Model\View\Result\RedirectFactory;
+use Magento\Framework\Controller\Result\RedirectFactory;
 use Improntus\PowerPay\Helper\Data;
 
 class Response implements ActionInterface
@@ -31,10 +30,12 @@ class Response implements ActionInterface
      */
     private $session;
 
+    /**
+     * @var PowerPay
+     */
     private $powerPay;
 
     public function __construct(
-        PageFactory $resultPageFactory,
         Session     $session,
         PowerPay $powerPay,
         RedirectFactory $redirectFactory,
@@ -46,7 +47,6 @@ class Response implements ActionInterface
         $this->redirectFactory = $redirectFactory;
         $this->powerPay = $powerPay;
         $this->session = $session;
-        $this->resultPageFactory = $resultPageFactory;
     }
 
 
@@ -55,6 +55,7 @@ class Response implements ActionInterface
      */
     public function execute()
     {
+        $resultRedirect = $this->redirectFactory->create();
         $path = 'checkout/onepage/failure';
         $result = $this->request->getParams();
         if (isset($result['error'])) {
@@ -62,30 +63,39 @@ class Response implements ActionInterface
                 $message = $this->session->getPowerPayError();
                 $this->session->setErrorMessage($message);
             } elseif ($result['error'] == 'noresponse') {
-                $message = (__('There was a problem retrieving data from PowerPay.'));
+                $message = (__('There was a problem retrieving data from PowerPay. Wait for status confirmation from PowerPay.'));
                 $this->session->setErrorMessage($message);
             }
         } elseif (isset($result['status'])) {
             $transactionId = $result['transaction_id'];
             $order = $this->session->getLastRealOrder();
+            if (!isset($result['token']) ||
+                $result['token'] !== $this->helper->generateToken($order)) {
+                $message = (__('Invalid Token.'));
+                $this->powerPay->cancelOrder($order, $message);
+                $this->session->setErrorMessage($message);
+                $resultRedirect->setPath($path);
+                return $resultRedirect;
+            }
             $this->powerPay->persistTransaction($order, $result);
-            if ($result['status'] == 'Processed') {
+            if ($result['status'] == 'processed') {
                 if ($this->powerPay->invoice($order,$transactionId)) {
                     $this->helper->log("Order: {$order->getIncrementId()} invoiced succesfully.");
                 } else {
                     $this->helper->log("Order: {$order->getIncrementId()} was NOT invoiced.");
                 }
                 $path = 'checkout/onepage/success';
-            } elseif ($result['status'] == 'Canceled') {
-                $message = (__('The payment was cancelled by PowerPay.'));
+            } else {
+                $message = (__('Unexpected response from PowerPay'));
+                if ($result['status'] == 'canceled') {
+                    $message = (__('The payment was cancelled by PowerPay.'));
+                } elseif ($result['status'] == 'expired') {
+                    $message = (__('The payment date has expired.'));
+                }
                 $this->session->setErrorMessage($message);
-            } elseif ($result['status'] == 'Expired') {
-                $message = (__('The payment date has expired.'));
-                $this->session->setErrorMessage($message);
-//                expired result?
+                $this->powerPay->cancelOrder($order, $message);
             }
         }
-        $resultRedirect = $this->redirectFactory->create();
         $resultRedirect->setPath($path);
         return $resultRedirect;
     }

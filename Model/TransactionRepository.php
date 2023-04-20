@@ -85,7 +85,7 @@ class TransactionRepository implements TransactionRepositoryInterface
     public function get($transactionId)
     {
         $transaction = $this->transactionFactory->create();
-        $this->resource->load($transaction, $transactionId);
+        $this->resource->load($transaction, $transactionId, TransactionInterface::POWERPAY_TRANSACTION_ID);
         if (!$transaction->getId()) {
             throw new NoSuchEntityException(__('Transaction with id "%1" does not exist.', $transactionId));
         }

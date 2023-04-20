@@ -4,7 +4,6 @@ namespace Improntus\PowerPay\Controller\Order;
 
 use Magento\Checkout\Model\Session;
 use Magento\Framework\App\ActionInterface;
-use Magento\Framework\View\Result\PageFactory;
 use Improntus\PowerPay\Model\PowerPay;
 use Magento\Backend\Model\View\Result\RedirectFactory;
 use Improntus\PowerPay\Helper\Data;
@@ -25,10 +24,12 @@ class Create implements ActionInterface
      */
     private $session;
 
+    /**
+     * @var PowerPay
+     */
     private $powerPay;
 
     public function __construct(
-        PageFactory $resultPageFactory,
         Session     $session,
         PowerPay $powerPay,
         RedirectFactory $redirectFactory,
@@ -38,10 +39,14 @@ class Create implements ActionInterface
         $this->redirectFactory = $redirectFactory;
         $this->powerPay = $powerPay;
         $this->session = $session;
-        $this->resultPageFactory = $resultPageFactory;
     }
 
 
+    /**
+     * @return \Magento\Backend\Model\View\Result\Redirect|\Magento\Framework\App\ResponseInterface|\Magento\Framework\Controller\ResultInterface
+     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
     public function execute()
     {
         $order = $this->session->getLastRealOrder();
@@ -55,6 +60,7 @@ class Create implements ActionInterface
                 $this->session->setPowerPayError($message);
                 $url = "{$this->helper->getCallBackUrl()}?error=true";
             } else {
+                $this->powerPay->persistTransaction($order, $response, 'create');
                 $url = $response['redirection_url'];
             }
         }
