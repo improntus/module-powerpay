@@ -104,7 +104,7 @@ class CancelOrder
             if ($expiredAt->format('Y-m-d H:i:s') < $currentTime->format('Y-m-d H:i:s')) {
                 $message = (__('Order canceled due to expiration time.'));
                 $this->powerPay->cancelOrder($order, $message);
-                $transaction->setStatus($this::CANCELED);
+                $transaction->setStatus($this::EXPIRED);
                 $this->transactionRepository->save($transaction);
             }
         }
