@@ -217,27 +217,31 @@ class PowerPay
      * @throws LocalizedException
      */
     public function persistTransaction($order, $result, $flow = 'response') {
-        if ($flow !== 'response') {
-            $transactionId = $result['id'];
-        } else {
-            $transactionId = $result['transaction_id'];
-        }
-        $status = strtolower($result['status'] ?? '');
-        if (!$this->transactionRepository->getByOrderId($order->getId())) {
-            $transaction = $this->transactionFactory->create();
-            $transaction->setOrderId($order->getId());
-            $transaction->setPowerPayTransactionId($transactionId ?? '');
-            $transaction->setStatus($status);
-            if (isset($result['created_at'])) {
-                $transaction->setCreatedAt($result['created_at']);
+        try {
+            if ($flow !== 'response') {
+                $transactionId = $result['id'];
+            } else {
+                $transactionId = $result['transaction_id'];
             }
-            $transaction->setExpiredAt($result['expired_at'] ?? '');
-            $this->transactionRepository->save($transaction);
-        } else {
-            $transaction = $this->transactionRepository->get($transactionId);
-            $transaction->setStatus($status);
-            $transaction->setExpiredAt($result['expired_at'] ?? '');
-            $this->transactionRepository->save($transaction);
+            $status = strtolower($result['status'] ?? '');
+            if (!$this->transactionRepository->getByOrderId($order->getId())) {
+                $transaction = $this->transactionFactory->create();
+                $transaction->setOrderId($order->getId());
+                $transaction->setPowerPayTransactionId($transactionId ?? '');
+                $transaction->setStatus($status);
+                if (isset($result['created_at'])) {
+                    $transaction->setCreatedAt($result['created_at']);
+                }
+                $transaction->setExpiredAt($result['expired_at'] ?? '');
+                $this->transactionRepository->save($transaction);
+            } else {
+                $transaction = $this->transactionRepository->get($transactionId);
+                $transaction->setStatus($status);
+                $transaction->setExpiredAt($result['expired_at'] ?? '');
+                $this->transactionRepository->save($transaction);
+            }
+        } catch (\Exception $e) {
+            $this->helper->log($e->getMessage());
         }
     }
 
