@@ -1,0 +1,20 @@
+{
+  "name": "improntus/module-powerpay",
+  "version": "1.0.0",
+  "description": "PowerPay",
+  "type": "magento2-module",
+  "require": {
+    "magento/framework": "*"
+  },
+  "license": [
+    "Proprietary"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
+    ],
+    "psr-4": {
+      "Improntus\\PowerPay\\": ""
+    }
+  }
+}
