@@ -149,7 +149,7 @@ class PowerPay
             'email' => $order->getCustomerEmail(),
             'phone_number' => $address->getTelephone() ?? '',
             'shipping_postal_code' => $address->getPostcode() ?? '',
-            'shipping_address' => "{$address->getStreet()[0]} {$address->getStreet()[1]}",
+            'shipping_address' => "{$address->getStreetLine(1)} {$address->getStreetLine(2)} {$address->getStreetLine(3)} {$address->getStreetLine(4)}",
         ];
     }
 
