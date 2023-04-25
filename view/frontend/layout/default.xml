@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceBlock name="head.additional">
+            <block class="Magento\Framework\View\Element\Template"
+                   name="powerpay.head"
+                   template="Improntus_PowerPay::head.phtml"
+                   ifconfig="payment/powerpay/widgets"
+                   before="-" >
+                <arguments>
+                    <argument name="view_model" xsi:type="object">Improntus\PowerPay\ViewModel\Widgets</argument>
+                </arguments>
+            </block>
+        </referenceBlock>
+        <referenceBlock name="header.container">
+            <block class="Magento\Framework\View\Element\Template"
+                   name="powerpay.header"
+                   template="Improntus_PowerPay::header.phtml"
+                   ifconfig="payment/powerpay/header_widget"
+                   before="-" >
+                <arguments>
+                    <argument name="view_model" xsi:type="object">Improntus\PowerPay\ViewModel\Widgets</argument>
+                </arguments>
+            </block>
+        </referenceBlock>
+    </body>
+</page>

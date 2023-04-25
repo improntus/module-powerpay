@@ -33,6 +33,22 @@ define([
             return window.checkoutConfig.payment[this.getCode()].banner;
         },
 
+        getWidgets: function () {
+            return window.checkoutConfig.payment[this.getCode()].widgets_active;
+        },
+
+        getCheckoutWidget: function () {
+            return window.checkoutConfig.payment[this.getCode()].checkout_widget;
+        },
+
+        getClientId: function () {
+            return window.checkoutConfig.payment[this.getCode()].client_id;
+        },
+
+        getOrderTotal: function () {
+            return quote.totals()['grand_total'];
+        },
+
         afterPlaceOrder: function () {
             fullScreenLoader.startLoader();
             window.location.href = window.checkoutConfig.payment[this.getCode()].redirect_url;

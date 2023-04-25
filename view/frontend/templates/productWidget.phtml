@@ -1,0 +1,17 @@
+<?php
+/** @var $block \Magento\Framework\View\Element\Template */
+/** @var $viewModel \Improntus\PowerPay\ViewModel\Widgets */
+/** @var $escaper \Magento\Framework\Escaper */
+
+$viewModel = $block->getViewModel();
+$storeId = $block->getStoreId();
+if ($viewModel->getProductWidgetEnabled($storeId)) :
+?>
+
+<mo-product-page
+    product-price=<?= $escaper->escapeHtml($block->getProduct()->getFinalPrice()); ?>
+    mo-client-id=<?= $escaper->escapeHtml($viewModel->getClientId($storeId)); ?>
+>
+</mo-product-page>
+
+<?php endif; ?>

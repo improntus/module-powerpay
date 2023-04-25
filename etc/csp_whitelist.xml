@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<csp_whitelist xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Csp:etc/csp_whitelist.xsd">
+    <policies>
+        <policy id="style-src">
+            <values>
+                <value id="powerpay_css" type="host">*.moprestamo.com</value>
+            </values>
+        </policy>
+        <policy id="script-src">
+            <values>
+                <value id="powerpay_js" type="host">*.moprestamo.com</value>
+            </values>
+        </policy>
+        <policy id="frame-src">
+            <values>
+                <value id="powerpay_frame" type="host">*.moprestamo.com</value>
+            </values>
+        </policy>
+        <policy id="img-src">
+            <values>
+                <value id="powerpay_img" type="host">*.moprestamo.com</value>
+            </values>
+        </policy>
+        <policy id="font-src">
+            <values>
+                <value id="powerpay_font" type="host">https://components-bnpl-pe-bbva-moprestamo-com.s3.amazonaws.com</value>
+            </values>
+        </policy>
+    </policies>
+</csp_whitelist>

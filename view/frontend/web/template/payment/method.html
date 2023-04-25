@@ -1,11 +1,11 @@
 <div class="payment-method" data-bind="css: {'_active': (getCode() == isChecked())}">
-    <div class="payment-method-title field choice">
+    <div class="payment-method-title field choice" style="display:flex">
         <input type="radio"
                name="payment[method]"
                class="radio"
                data-bind="attr: {'id': getCode()}, value: getCode(), checked: isChecked, click: selectPaymentMethod, visible: isRadioButtonVisible()"/>
         <div class="powerpay-payment-logo" data-bind="click: selectPaymentMethod">
-            <img data-bind="attr: {alt: 'PowerPay Banner', src: getBanner()}" class="payment-banner-checkout" width="160px" height="40px"/>
+            <img data-bind="click: selectPaymentMethod, attr: {alt: 'PowerPay Banner', src: getBanner()}" class="payment-banner-checkout" style="vertical-align: middle" width="160px" height="40px"/>
         </div>
         <!--<label class="label" data-bind="attr: {'for': getCode()}">
             <span data-bind="text: getTitle()"></span>
@@ -35,5 +35,15 @@
                 </button>
             </div>
         </div>
+        <!-- ko if: getWidgets() -->
+        <!-- ko if: getCheckoutWidget() -->
+        <p></p>
+        <div class="powerpay-widget">
+            <mo-checkout
+                data-bind="attr: {'product-price': getOrderTotal(), 'mo-client-id': getClientId()}"
+            ></mo-checkout>
+        </div>
+        <!-- /ko -->
+        <!-- /ko -->
     </div>
 </div>

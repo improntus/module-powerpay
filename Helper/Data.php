@@ -22,6 +22,11 @@ class Data
     const MERCHANT_ID = 'merchant_id';
     const CONCEPT = 'concept';
     const CANCEL_HOURS = 'cancel_hours';
+    const WIDGETS_ENABLED = 'widgets';
+    const PRODUCT_WIDGET = 'product_widget';
+    const HEADER_WIDGET = 'header_widget';
+    const BANNER_WIDGET = 'banner_widget';
+    const CHECKOUT_WIDGET = 'checkout_widget';
 
     const EP_MERCHANT_TRANSACTIONS = 'merchant-transactions';
 
@@ -106,11 +111,11 @@ class Data
     }
 
     /**
-     * @return mixed|string
+     * @return bool
      */
     public function isActive()
     {
-        return $this->getConfigData($this::ACTIVE);
+        return (bool)$this->getConfigData($this::ACTIVE);
     }
 
     /**
@@ -136,12 +141,14 @@ class Data
     {
         return $this->getConfigData($this::CLIENTID, $storeId);
     }
+
     /**
-     * @return mixed|string
+     * @param $storeId
+     * @return bool
      */
     public function isDebugEnabled($storeId = null)
     {
-        return $this->getConfigData($this::DEBUG, $storeId);
+        return (bool)$this->getConfigData($this::DEBUG, $storeId);
     }
 
     /**
@@ -193,10 +200,70 @@ class Data
         return $this->storeManager->getStore($storeId)->getName();
     }
 
+    /**
+     * @param $storeId
+     * @return bool
+     */
+    public function getSandbox($storeId = null)
+    {
+        return (bool)$this->getConfigData($this::SANDBOX, $storeId);
+    }
+
+    /**
+     * @param $storeId
+     * @return bool
+     */
     public function getCancelHours($storeId = null)
     {
-        return $this->getConfigData($this::CANCEL_HOURS, $storeId);
+        return (bool)$this->getConfigData($this::CANCEL_HOURS, $storeId);
     }
+
+    /**
+     * @param $storeId
+     * @return bool
+     */
+    public function getWidgetsEnabled($storeId = null)
+    {
+        return (bool)$this->getConfigData($this::WIDGETS_ENABLED, $storeId);
+    }
+
+    /**
+     * @param $storeId
+     * @return bool
+     */
+    public function getProductWidgetEnabled($storeId = null)
+    {
+        return (bool)$this->getConfigData($this::PRODUCT_WIDGET, $storeId);
+    }
+
+    /**
+     * @param $storeId
+     * @return bool
+     */
+    public function getHeaderWidgetEnabled($storeId = null)
+    {
+        return (bool)$this->getConfigData($this::HEADER_WIDGET, $storeId);
+    }
+
+    /**
+     * @param $storeId
+     * @return bool
+     */
+    public function getBannerWidgetEnabled($storeId = null)
+    {
+        return (bool)$this->getConfigData($this::BANNER_WIDGET, $storeId);
+    }
+
+
+    /**
+     * @param $storeId
+     * @return bool
+     */
+    public function getCheckoutWidgetEnabled($storeId = null)
+    {
+        return (bool)$this->getConfigData($this::CHECKOUT_WIDGET, $storeId);
+    }
+
     /**
      * @param $message
      * @return void

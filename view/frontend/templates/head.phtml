@@ -1,0 +1,15 @@
+<?php
+/** @var $block \Magento\Framework\View\Element\Template */
+/** @var $viewModel \Improntus\PowerPay\ViewModel\Widgets */
+/** @var $escaper \Magento\Framework\Escaper */
+
+$viewModel = $block->getViewModel();
+$storeId = $block->getStoreId();
+?>
+<link
+    rel="stylesheet"
+    href=<?= $escaper->escapeHtml($viewModel->getCssUrl()) ?>>
+<script
+    type="module"
+    src=<?= $escaper->escapeHtml($viewModel->getJsUrl($storeId)) ?>
+></script>

@@ -14,5 +14,8 @@ $ php bin/magento setup:static-content:deploy
 ### Configuraciones
 Configuraciones disponibles en Tiendas>Configuracion>Métodos de Pago>PowerPay
 
+### Contemplaciones
+Los widgets de PowerPay son cargados desde librerías externas por lo que el módulo contiene un csp_whitelist.xml con excepciones para los dominios requeridos.
+
 ## Autor
 Pablo Algranati

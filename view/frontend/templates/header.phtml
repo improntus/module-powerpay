@@ -1,0 +1,9 @@
+<?php
+/** @var $block \Magento\Framework\View\Element\Template */
+/** @var $viewModel \Improntus\PowerPay\ViewModel\Widgets */
+/** @var $escaper \Magento\Framework\Escaper */
+
+$viewModel = $block->getViewModel();
+$storeId = $block->getStoreId();
+?>
+<mo-header mo-client-id="<?= $escaper->escapeHtml($viewModel->getClientId($storeId)); ?>"></mo-header> <br />
