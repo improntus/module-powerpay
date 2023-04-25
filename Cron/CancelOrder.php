@@ -72,7 +72,7 @@ class CancelOrder
             $datetime2 = date_create(date('Y-m-d H:i:s', strtotime("now")));
             $interval = abs(($datetime1->getTimestamp() - $datetime2->getTimestamp())/3600);
             $cancelHours = $this->helper->getCancelHours($order->getStore()->getId());
-            if ($cancelHours === '') {
+            if ($cancelHours == '') {
                 $cancelHours = 24;
             }
             if ($interval > $cancelHours) {

@@ -209,13 +209,14 @@ class Data
         return (bool)$this->getConfigData($this::SANDBOX, $storeId);
     }
 
+
     /**
      * @param $storeId
-     * @return bool
+     * @return mixed|string
      */
     public function getCancelHours($storeId = null)
     {
-        return (bool)$this->getConfigData($this::CANCEL_HOURS, $storeId);
+        return $this->getConfigData($this::CANCEL_HOURS, $storeId) ?? '';
     }
 
     /**
