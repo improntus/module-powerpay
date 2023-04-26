@@ -135,13 +135,13 @@ class PowerPay
     }
 
     /**
-     * @param $order
+     * @param Order $order
      * @return array
      * @throws \Magento\Framework\Exception\LocalizedException
      */
     private function getCustomerData($order)
     {
-        $address = $order->getShippingAddress();
+        $address = $order->getBillingAddress();
         return [
             'document_number' => $order->getCustomerTaxvat() ?? '',
             'first_name' => $address->getFirstname(),
