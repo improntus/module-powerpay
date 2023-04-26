@@ -1,0 +1,35 @@
+"Credentials are filled. But couldn't be verified","Credenciales ingresadas. Pero no pudieron ser verificadas"
+"Credentials section is incomplete. Please, fill the section and try again.","Por favor ingrese las credenciales de PowerPay."
+"There was a problem retrieving data from PowerPay. Wait for status confirmation from PowerPay.","Hubo un problema al traer la respuesta, por favor aguarde una confirmación de PowerPay."
+"Invalid Token.","Token inválido"
+"Unexpected response from PowerPay","Respuesta inesperada de PowerPay"
+"The payment was cancelled by PowerPay.","El pago fue cancelado por PowerPay."
+"The payment date has expired.","La fecha de pago expiró."
+"Order canceled after' . . ' hours pending.","Orden cancelada luego de ' . . ' horas sin cambios."
+"Order canceled due to expiration time.","Orden cancelada por pago expirado."
+"Authentication failed","Fallo la autenticación"
+"Order could not be invoiced.","La factura no pudo ser generada."
+"Invalid request data.","Información inválida."
+"Order ' . . ' by PowerPay.","Orden ' . . ' por PowerPay."
+PowerPay,PowerPay
+"Payment confirmed by PowerPay","Pago confirmado por PowerPay"
+"Could not save the transaction: %1","No se pudo generar la transacción: %1"
+"Transaction with id ""%1"" does not exist.","La transacción con id ""%1"" no existe."
+"Could not delete the Transaction: %1","No se pudo borrar la transacción: %1"
+"Place Order","Comprar"
+"Credentials status","Estado de credenciales"
+Enabled,Activado
+Title,Título
+Debug,Debug
+"Sandbox Mode","Modo Sandbox"
+"Client Id","Client Id"
+Secret,Secret
+"Merchant ID","Merchant ID"
+Concept,Concepto
+"Sort Order","Posición"
+"Cancel order after X hours","Cancelar orden luego de X horas"
+Widgets,Widgets
+"PDP widget","PDP widget"
+"Store header","Encabezado"
+"Store banner","Pie de página"
+"Checkout widget","Checkout widget"

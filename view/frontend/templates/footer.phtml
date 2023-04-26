@@ -5,7 +5,7 @@
 
 $viewModel = $block->getViewModel();
 $storeId = $block->getStoreId();
-if ($viewModel->getHeaderWidgetEnabled($storeId)) :
-?>
-<mo-header mo-client-id="<?= $escaper->escapeHtml($viewModel->getClientId($storeId)); ?>"></mo-header> <br />
+if ($viewModel->getBannerWidgetEnabled($storeId)) :
+    ?>
+    <mo-banner mo-client-id="<?= $escaper->escapeHtml($viewModel->getClientId($storeId)); ?>"></mo-banner> <br />
 <?php endif; ?>

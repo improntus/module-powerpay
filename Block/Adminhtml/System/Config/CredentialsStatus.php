@@ -35,10 +35,10 @@ class CredentialsStatus extends \Magento\Config\Block\System\Config\Form\Field
     {
          if ($this->powerPayHelper->validateCredentials() === $this->powerPayHelper::USER_AUTHENTICATED) {
              $status = 'success';
-             $label = __('User authenticated.');
+             $label = __("Credentials are filled. But couldn't be verified");
          } else {
                 $status = 'warning';
-                $label = __('Credentials section is incomplete. Please, complete the section and try again.');
+                $label = __('Credentials section is incomplete. Please, fill the section and try again.');
 
         }
 

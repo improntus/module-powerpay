@@ -17,12 +17,23 @@
             <block class="Magento\Framework\View\Element\Template"
                    name="powerpay.header"
                    template="Improntus_PowerPay::header.phtml"
-                   ifconfig="payment/powerpay/header_widget"
+                   ifconfig="payment/powerpay/widgets"
                    before="-" >
                 <arguments>
                     <argument name="view_model" xsi:type="object">Improntus\PowerPay\ViewModel\Widgets</argument>
                 </arguments>
             </block>
         </referenceBlock>
+        <referenceContainer name="main">
+            <block class="Magento\Framework\View\Element\Template"
+                   name="powerpay.footer"
+                   template="Improntus_PowerPay::footer.phtml"
+                   ifconfig="payment/powerpay/widgets"
+                   after="-" >
+                <arguments>
+                    <argument name="view_model" xsi:type="object">Improntus\PowerPay\ViewModel\Widgets</argument>
+                </arguments>
+            </block>
+        </referenceContainer>
     </body>
 </page>

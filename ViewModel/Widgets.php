@@ -50,9 +50,10 @@ class Widgets implements \Magento\Framework\View\Element\Block\ArgumentInterface
         return $this->helper->getClientId($storeId);
     }
 
+
     /**
      * @param $storeId
-     * @return mixed|string
+     * @return bool
      */
     public function getProductWidgetEnabled($storeId)
     {
@@ -61,10 +62,19 @@ class Widgets implements \Magento\Framework\View\Element\Block\ArgumentInterface
 
     /**
      * @param $storeId
-     * @return mixed|string
+     * @return bool
      */
     public function getBannerWidgetEnabled($storeId)
     {
         return $this->helper->getBannerWidgetEnabled($storeId);
+    }
+
+    /**
+     * @param $storeId
+     * @return bool
+     */
+    public function getHeaderWidgetEnabled($storeId)
+    {
+        return $this->helper->getHeaderWidgetEnabled($storeId);
     }
 }
