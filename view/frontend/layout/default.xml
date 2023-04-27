@@ -24,12 +24,12 @@
                 </arguments>
             </block>
         </referenceBlock>
-        <referenceContainer name="main">
+        <referenceContainer name="page.wrapper">
             <block class="Magento\Framework\View\Element\Template"
                    name="powerpay.footer"
                    template="Improntus_PowerPay::footer.phtml"
                    ifconfig="payment/powerpay/widgets"
-                   after="-" >
+                   before="absolute_footer" >
                 <arguments>
                     <argument name="view_model" xsi:type="object">Improntus\PowerPay\ViewModel\Widgets</argument>
                 </arguments>
