@@ -1,6 +1,6 @@
-# Module PowerPay
+# Module Powerpay
 ## Descripción
-PowerPay para Magento (Adobe Commerce) te ofrece la posibilidad de aumentar tu conversión rate con financiones en cuotas exclusivas para clientes PowerPay. 
+Powerpay para Magento (Adobe Commerce) te ofrece la posibilidad de aumentar tu conversión rate con financiones en cuotas exclusivas para clientes PowerPay. 
 
 ### Instalación
 
@@ -12,10 +12,10 @@ $ php bin/magento setup:static-content:deploy
 ```
 
 ### Configuraciones
-Configuraciones disponibles en Tiendas>Configuracion>Métodos de Pago>PowerPay
+Configuraciones disponibles en Tiendas>Configuracion>Métodos de Pago>Powerpay
 
 ### Contemplaciones
-Los widgets de PowerPay son cargados desde librerías externas por lo que el módulo contiene un csp_whitelist.xml con excepciones para los dominios requeridos.
+Los widgets de Powerpay son cargados desde librerías externas por lo que el módulo contiene un csp_whitelist.xml con excepciones para los dominios requeridos.
 
 ## Autor
 Pablo Algranati

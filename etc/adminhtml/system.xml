@@ -12,7 +12,7 @@
                 <fieldset_css>powerpay</fieldset_css>
                 <frontend_model>Magento\Paypal\Block\Adminhtml\System\Config\Fieldset\Payment</frontend_model>
                 <comment>
-                    <![CDATA[<div class="powerpay-payment-logo"></div><div class="powerpay-payment-text">Incrementa tu conversion rate con pagos financiados por <strong>PowerPay.</strong></div>]]>
+                    <![CDATA[<div class="powerpay-payment-logo"></div><div class="powerpay-payment-text">Incrementa tu conversion rate con pagos financiados por <strong>Powerpay.</strong></div>]]>
                 </comment>
                 <field id="credentials_status" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1"
                        showInStore="1">
@@ -72,7 +72,7 @@
                     <label>Widgets</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <config_path>payment/powerpay/widgets</config_path>
-                    <comment>Enable PowerPay Widgets. (Might need to clean cache for changes to make effect)</comment>
+                    <comment>Enable Powerpay Widgets. (Might need to clean cache for changes to make effect)</comment>
                 </field>
                 <field id="product_widget" translate="label" type="select" sortOrder="190" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>PDP widget</label>

@@ -117,7 +117,7 @@ class PowerPay
             'callback_url' => $this->helper->getCallBackUrl($token),
             'values' => [
                 'merchant_id' => $this->helper->getMerchantId($order->getStoreId()),
-                'company_name' => $this->helper->getCompanyName($order->getStoreId()),
+//                'company_name' => $this->helper->getCompanyName($order->getStoreId()),  */powerpay pide que no se mande  company_name*/
                 'currency' => 'PEN',
                 'document_number' => $customerData['document_number'],
                 'document_type' => 'DNI',
@@ -181,7 +181,7 @@ class PowerPay
             }
             $invoice->pay();
             $invoice->getOrder()->setIsInProcess(true);
-            $payment->addTransactionCommentsToOrder($transaction, __('PowerPay'));
+            $payment->addTransactionCommentsToOrder($transaction, __('Powerpay'));
             $this->invoiceRepository->save($invoice);
             $message = (__('Payment confirmed by PowerPay'));
             $order->addCommentToStatusHistory($message, Order::STATE_PROCESSING);

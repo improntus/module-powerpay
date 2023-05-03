@@ -70,7 +70,7 @@ class Callback implements CallbackInterface
     private function processCancel($order, $status)
     {
         $status = strtolower($status);
-        $message = (__('Order ' . $status . ' by PowerPay.'));
+        $message = (__('Order ' . $status . ' by Powerpay.'));
         if ($this->powerPay->cancelOrder($order, $message)) {
             return true;
         } else {

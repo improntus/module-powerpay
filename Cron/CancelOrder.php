@@ -8,6 +8,7 @@ use Improntus\PowerPay\Model\PowerPay;
 use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Sales\Model\Order;
+use Magento\Sales\Model\ResourceModel\Order\Collection as OrderCollection;
 
 class CancelOrder
 {
@@ -15,6 +16,13 @@ class CancelOrder
     CONST PENDING = 'pending';
     CONST EXPIRED = 'expired';
     CONST CANCELED = 'canceled';
+    CONST PAYMENT_METHOD = 'powerpay';
+
+    /**
+     * @var OrderCollection
+     */
+    private $orderCollection;
+
     /**
      * @var PowerPay
      */
@@ -44,9 +52,11 @@ class CancelOrder
         SearchCriteriaBuilder $searchCriteriaBuilder,
         OrderRepositoryInterface $orderRepository,
         Data $helper,
-        PowerPay $powerPay
+        PowerPay $powerPay,
+        OrderCollection $orderCollection
     )
     {
+        $this->orderCollection = $orderCollection;
         $this->powerPay = $powerPay;
         $this->helper = $helper;
         $this->orderRepository = $orderRepository;
@@ -57,14 +67,12 @@ class CancelOrder
 
     /**
      * @return void
-     * @throws \Magento\Framework\Exception\LocalizedException
      */
     public function cancelPending()
     {
-        $collection = $this->getTransactionCollection(self::PENDING);
+        $collection = $this->getOrderCollection(self::PENDING);
 
-        foreach ($collection as $transaction) {
-            $order = $this->orderRepository->get($transaction->getOrderId());
+        foreach ($collection as $order) {
             if ($order->getState() !== Order::STATE_NEW) {
                 continue;
             }
@@ -76,10 +84,8 @@ class CancelOrder
                 $cancelHours = 24;
             }
             if ($interval > $cancelHours) {
-                $message = (__('Order canceled after' . $cancelHours . ' hours pending.'));
+                $message = (__('Order canceled after ' . $cancelHours . ' hours pending.'));
                 $this->powerPay->cancelOrder($order, $message);
-                $transaction->setStatus($this::CANCELED);
-                $this->transactionRepository->save($transaction);
             }
         }
     }
@@ -119,6 +125,23 @@ class CancelOrder
             ->addFilter('status', $status)
             ->create();
         return $this->transactionRepository->getList($searchCriteria)->getItems();
+    }
+
+    /**
+     * @param $status
+     * @return OrderCollection
+     */
+    private function getOrderCollection($status)
+    {
+            $this->orderCollection->getSelect()
+                ->joinLeft(["sop" => "sales_order_payment"],
+                    'main_table.entity_id = sop.parent_id',
+                    array('method')
+                )
+                ->where('sop.method = ?',$this::PAYMENT_METHOD );
+            $this->orderCollection->addFieldToFilter('status', $status);
+            return $this->orderCollection;
+
     }
 
 }

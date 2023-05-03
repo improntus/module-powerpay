@@ -5,13 +5,16 @@
                class="radio"
                data-bind="attr: {'id': getCode()}, value: getCode(), checked: isChecked, click: selectPaymentMethod, visible: isRadioButtonVisible()"/>
         <div class="powerpay-payment-logo" data-bind="click: selectPaymentMethod">
-            <img data-bind="click: selectPaymentMethod, attr: {alt: 'PowerPay Banner', src: getBanner()}" class="payment-banner-checkout" style="vertical-align: middle" width="160px" height="40px"/>
+            <img data-bind="click: selectPaymentMethod, attr: {alt: 'Powerpay Banner', src: getBanner()}" class="payment-banner-checkout" style="vertical-align: middle" width="160px" height="40px"/>
+            <span style="margin-left:1rem ;"><strong>Compra ahora paga después. Desde 0% de interés.</strong></span>
         </div>
         <!--<label class="label" data-bind="attr: {'for': getCode()}">
             <span data-bind="text: getTitle()"></span>
         </label>-->
     </div>
-
+<!--    <div style="margin-top: -2rem">-->
+<!--        <span>Paga después, a tu ritmo con la nueva forma de pago en cuotas Powerpay. Hoy solo pagarás la 1a cuota con tu tarjeta de crédito. Las demás cuotas de cargarán cada 30 días en la misma tarjeta que hayas afiliado.</span>-->
+<!--    </div>-->
     <div class="payment-method-content">
         <!-- ko foreach: getRegion('messages') -->
         <!-- ko template: getTemplate() --><!-- /ko -->
@@ -22,6 +25,17 @@
             <!-- ko template: getTemplate() --><!-- /ko -->
             <!--/ko-->
         </div>
+
+        <!-- ko if: getWidgets() -->
+        <!-- ko if: getCheckoutWidget() -->
+        <p></p>
+        <div class="powerpay-widget" style="margin-bottom: 2rem">
+            <mo-checkout
+                data-bind="attr: {'product-price': getOrderTotal(), 'mo-client-id': getClientId()}"
+            ></mo-checkout>
+        </div>
+        <!-- /ko -->
+        <!-- /ko -->
 
         <div class="actions-toolbar">
             <div class="primary">
@@ -35,15 +49,5 @@
                 </button>
             </div>
         </div>
-        <!-- ko if: getWidgets() -->
-        <!-- ko if: getCheckoutWidget() -->
-        <p></p>
-        <div class="powerpay-widget">
-            <mo-checkout
-                data-bind="attr: {'product-price': getOrderTotal(), 'mo-client-id': getClientId()}"
-            ></mo-checkout>
-        </div>
-        <!-- /ko -->
-        <!-- /ko -->
     </div>
 </div>

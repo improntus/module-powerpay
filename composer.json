@@ -1,7 +1,7 @@
 {
   "name": "improntus/module-powerpay",
-  "version": "1.0.3",
-  "description": "PowerPay",
+  "version": "1.0.4",
+  "description": "Powerpay",
   "type": "magento2-module",
   "require": {
     "magento/framework": "*"

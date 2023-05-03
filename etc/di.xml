@@ -16,7 +16,7 @@
         </arguments>
     </type>
 
-    <virtualType name="PowerPay" type="Magento\Payment\Model\Method\Adapter">
+    <virtualType name="Powerpay" type="Magento\Payment\Model\Method\Adapter">
         <arguments>
             <argument name="code" xsi:type="const">Improntus\PowerPay\Model\ConfigProvider::CODE</argument>
             <argument name="formBlockType" xsi:type="string">Magento\Payment\Block\Form</argument>
@@ -79,6 +79,11 @@
     <type name="Improntus\PowerPay\Controller\Order\Response">
         <arguments>
             <argument name="session" xsi:type="object">Magento\Checkout\Model\Session\Proxy</argument>
+        </arguments>
+    </type>
+    <type name="Improntus\PowerPay\Block\Onepage\Failure">
+        <arguments>
+            <argument name="checkoutSession" xsi:type="object">Magento\Checkout\Model\Session\Proxy</argument>
         </arguments>
     </type>
 

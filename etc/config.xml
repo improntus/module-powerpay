@@ -4,9 +4,9 @@
         <payment>
             <powerpay>
                 <active>1</active>
-                <model>PowerPay</model>
+                <model>Powerpay</model>
                 <order_status>pending</order_status>
-                <title>PowerPay</title>
+                <title>Powerpay</title>
                 <currency>PEN</currency>
                 <can_authorize>0</can_authorize>
                 <can_capture>0</can_capture>
