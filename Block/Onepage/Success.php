@@ -11,6 +11,10 @@ class Success extends \Magento\Checkout\Block\Onepage\Success
 {
 
     /**
+     * @var \Magento\Checkout\Model\Session
+     */
+    private $checkoutSession;
+    /**
      * @var Image
      */
     private $imageHelper;
@@ -29,17 +33,22 @@ class Success extends \Magento\Checkout\Block\Onepage\Success
         array $data = []
     )
     {
+        $this->checkoutSession = $checkoutSession;
         $this->imageHelper = $imageHelper;
         $this->orderRepository = $orderRepository;
         parent::__construct($context, $checkoutSession, $orderConfig, $httpContext, $data);
     }
 
     /**
-     * @return \Magento\Sales\Api\Data\OrderInterface
+     * @return false|\Magento\Sales\Api\Data\OrderInterface
      */
     public function getOrderData()
     {
-        return $this->orderRepository->get($this->getOrderId());
+        if ($this->checkoutSession->getLastRealOrder()->getId()) {
+            return $this->orderRepository->get($this->checkoutSession->getLastRealOrder()->getId());
+        } else {
+            return false;
+        }
     }
 
     /**
