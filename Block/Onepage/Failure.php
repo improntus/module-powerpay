@@ -3,7 +3,6 @@
 namespace Improntus\PowerPay\Block\Onepage;
 
 use Magento\Sales\Api\OrderRepositoryInterface;
-use Magento\Sales\Model\Order;
 
 class Failure extends \Magento\Checkout\Block\Onepage\Failure
 {

@@ -13,7 +13,7 @@
             </action>
         </referenceBlock>
         <referenceContainer name="content">
-            <block class="Improntus\PowerPay\Block\Onepage\Failure" name="checkout.failure" template="Improntus_PowerPay::failure.phtml"/>
+            <block class="Improntus\PowerPay\Block\Onepage\Failure" name="powerpay.checkout.failure" template="Improntus_PowerPay::onepage/failure.phtml"/>
         </referenceContainer>
     </body>
 </page>

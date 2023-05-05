@@ -12,19 +12,13 @@
             <span data-bind="text: getTitle()"></span>
         </label>-->
     </div>
-<!--    <div style="margin-top: -2rem">-->
-<!--        <span>Paga después, a tu ritmo con la nueva forma de pago en cuotas Powerpay. Hoy solo pagarás la 1a cuota con tu tarjeta de crédito. Las demás cuotas de cargarán cada 30 días en la misma tarjeta que hayas afiliado.</span>-->
-<!--    </div>-->
+    <!--    <div style="margin-top: -2rem">-->
+    <!--        <span>Paga después, a tu ritmo con la nueva forma de pago en cuotas Powerpay. Hoy solo pagarás la 1a cuota con tu tarjeta de crédito. Las demás cuotas de cargarán cada 30 días en la misma tarjeta que hayas afiliado.</span>-->
+    <!--    </div>-->
     <div class="payment-method-content">
         <!-- ko foreach: getRegion('messages') -->
         <!-- ko template: getTemplate() --><!-- /ko -->
         <!--/ko-->
-
-        <div class="payment-method-billing-address">
-            <!-- ko foreach: $parent.getRegion(getBillingAddressFormName()) -->
-            <!-- ko template: getTemplate() --><!-- /ko -->
-            <!--/ko-->
-        </div>
 
         <!-- ko if: getWidgets() -->
         <!-- ko if: getCheckoutWidget() -->
@@ -36,6 +30,12 @@
         </div>
         <!-- /ko -->
         <!-- /ko -->
+
+        <div class="payment-method-billing-address">
+            <!-- ko foreach: $parent.getRegion(getBillingAddressFormName()) -->
+            <!-- ko template: getTemplate() --><!-- /ko -->
+            <!--/ko-->
+        </div>
 
         <div class="actions-toolbar">
             <div class="primary">

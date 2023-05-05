@@ -1,0 +1,60 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+?>
+<?php /** @var $block \Improntus\PowerPay\Block\Onepage\Success */
+/** @var $escaper \Magento\Framework\Escaper */
+?>
+<div class="checkout-success">
+    <?php if ($block->getOrderId()) :?>
+        <?php if ($block->getCanViewOrder()) :?>
+            <p><?= $block->escapeHtml(__('Your order number is: %1.', sprintf('<a href="%s" class="order-number"><strong>%s</strong></a>', $block->escapeUrl($block->getViewOrderUrl()), $block->getOrderId())), ['a', 'strong']) ?></p>
+        <?php  else :?>
+            <p><?= $block->escapeHtml(__('Your order # is: <span>%1</span>.', $block->getOrderId()), ['span']) ?></p>
+        <?php endif;?>
+        <?= '<strong>' . $escaper->escapeHtml($block->getOrderData()->getCustomerFirstname()) . '</strong>' . $escaper->escapeHtml(__(' your order was placed successfully.')) ?>
+        <div>
+            <h2><strong><?= $escaper->escapeHtml(__('Details')) ?></strong></h2>
+            <hr>
+            <table>
+                <tbody class="cart item">
+                <tr>
+                    <?php
+                    $i = 1;
+                    foreach ($block->getOrderItems() as $product) : ?>
+                    <?php if ($i > 1 && $i/3 == 1) : ?>
+                <tr>
+                    <?php endif; ?>
+                    <div style="width: 33%;float: left;margin-bottom: 2rem">
+                        <div><strong><?= $escaper->escapeHtml($product['product']->getName())?></strong></div>
+                        <div><img src="<?= $escaper->escapeHtml($block->getProductImage($product['product'])) ?>" alt=""></div>
+                        <div><strong><?= $escaper->escapeHtml(__('Quantity: ' . round($product['qty'])))?></strong></div>
+                        <div><strong><?= ($product['product']->getFormattedPrice())?></strong></div>
+                    </div>
+                    <?php if ($i > 1 && $i/3 == 1) : ?>
+                </tr>
+                <?php endif; ?>
+                <?php
+                $i++;
+                endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    <div>
+        <?= '<strong> ' . $escaper->escapeHtml(__('Subtotal: ' )) . '</strong>' .  number_format($block->getOrderData()->getSubtotal(), 2, '.', ''); ?>
+    </div>
+    <p></p>
+        <hr>
+        <p><?= $block->escapeHtml(__('We\'ll email you an order confirmation with details and tracking info.')) ?></p>
+    <?php endif;?>
+    <?= $block->getAdditionalInfoHtml() ?>
+
+    <div class="actions-toolbar">
+        <div class="primary">
+            <a class="action primary continue" href="<?= $block->escapeUrl($block->getContinueUrl()) ?>"><span><?= $block->escapeHtml(__('Continue Shopping')) ?></span></a>
+        </div>
+    </div>
+</div>
