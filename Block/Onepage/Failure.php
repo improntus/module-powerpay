@@ -32,8 +32,12 @@ class Failure extends \Magento\Checkout\Block\Onepage\Failure
         }
     }
 
-    public function getTryAgainUrl($id)
+    public function getIsPowerpayPayment()
     {
-        return $this->getUrl('sales/order/reorder', ['order_id' => $id]);
+        if ($order = $this->getOrderData()) {
+            return $order->getPayment()->getMethod() == 'powerpay';
+        } else {
+            return false;
+        }
     }
 }

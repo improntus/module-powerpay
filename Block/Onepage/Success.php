@@ -6,10 +6,15 @@ use Magento\Catalog\Model\Product;
 use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Sales\Model\Order;
 use Magento\Catalog\Helper\Image;
+use Improntus\PowerPay\Helper\Data;
 
 class Success extends \Magento\Checkout\Block\Onepage\Success
 {
 
+    /**
+     * @var Data
+     */
+    private $helper;
     /**
      * @var \Magento\Checkout\Model\Session
      */
@@ -30,9 +35,11 @@ class Success extends \Magento\Checkout\Block\Onepage\Success
         \Magento\Framework\App\Http\Context $httpContext,
         OrderRepositoryInterface $orderRepository,
         Image $imageHelper,
+        Data $helper,
         array $data = []
     )
     {
+        $this->helper = $helper;
         $this->checkoutSession = $checkoutSession;
         $this->imageHelper = $imageHelper;
         $this->orderRepository = $orderRepository;
@@ -76,6 +83,15 @@ class Success extends \Magento\Checkout\Block\Onepage\Success
     public function getProductImage($product)
     {
         return $this->imageHelper->init($product, 'cart_page_product_thumbnail')->getUrl();
+    }
+
+    /**
+     * @return bool
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    public function getCustomSuccess()
+    {
+        return $this->helper->getCustomSuccess($this->_storeManager->getStore()->getId());
     }
 
 }

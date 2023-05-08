@@ -68,6 +68,12 @@
                     <config_path>payment/powerpay/cancel_hours</config_path>
                     <comment>Pending orders will be canceled after the amount of hours configured. (Default is 24hs)</comment>
                 </field>
+                <field id="custom_success" translate="label" type="select" sortOrder="175" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Custom success page</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <config_path>payment/powerpay/custom_success</config_path>
+                    <comment>Enable custom success page with order review</comment>
+                </field>
                 <field id="widgets" translate="label" type="select" sortOrder="180" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Widgets</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>

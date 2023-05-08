@@ -28,6 +28,9 @@ class Data
     const BANNER_WIDGET = 'banner_widget';
     const CHECKOUT_WIDGET = 'checkout_widget';
 
+    const CUSTOM_SUCCESS = 'custom_success';
+
+
     const EP_MERCHANT_TRANSACTIONS = 'merchant-transactions';
 
     /**
@@ -263,6 +266,15 @@ class Data
     public function getCheckoutWidgetEnabled($storeId = null)
     {
         return (bool)$this->getConfigData($this::CHECKOUT_WIDGET, $storeId);
+    }
+
+    /**
+     * @param $storeId
+     * @return bool
+     */
+    public function getCustomSuccess($storeId = null)
+    {
+        return (bool)$this->getConfigData($this::CUSTOM_SUCCESS, $storeId);
     }
 
     /**

@@ -15,18 +15,20 @@
         <?php  else :?>
             <p><?= $block->escapeHtml(__('Your order # is: <span>%1</span>.', $block->getOrderId()), ['span']) ?></p>
         <?php endif;?>
+        <?php if($block->getCustomSuccess()) : ?>
         <?php if($orderData = $block->getOrderData()) : ?>
             <?= '<strong>' . $escaper->escapeHtml($orderData->getCustomerFirstname()) . '</strong>' . $escaper->escapeHtml(__(' your order was placed successfully.')) ?>
             <div>
                 <h2><strong><?= $escaper->escapeHtml(__('Details')) ?></strong></h2>
                 <hr>
+                <div class="order-review-table-container" style="width:100%;text-align: center">
                 <table>
                     <tbody class="cart item">
                     <tr>
                         <?php
                         $i = 1;
                         foreach ($block->getOrderItems() as $product) : ?>
-                        <?php if ($i > 1 && $i/3 == 1) : ?>
+                        <?php if ($i > 1 && $i%3 === 0) : ?>
                     <tr>
                         <?php endif; ?>
                         <div style="width: 33%;float: left;margin-bottom: 2rem">
@@ -35,14 +37,16 @@
                             <div><strong><?= $escaper->escapeHtml(__('Quantity: ' . round($product['qty'])))?></strong></div>
                             <div><strong><?= ($product['product']->getFormattedPrice())?></strong></div>
                         </div>
-                        <?php if ($i > 1 && $i/3 == 1) : ?>
+                        <?php if ($i > 1 && $i%3 === 0) : ?>
                     </tr>
+                    <div style="width: 100%;float:left;margin: 1rem 0 1rem 0"></div>
                     <?php endif; ?>
                     <?php
                     $i++;
                     endforeach; ?>
                     </tbody>
                 </table>
+                </div>
             </div>
             <div>
                 <?= '<strong> ' . $escaper->escapeHtml(__('Subtotal: ' )) . '</strong>' .  number_format($orderData->getSubtotal(), 2, '.', ''); ?>
@@ -50,6 +54,7 @@
             <p></p>
             <hr>
         <?php endif; ?>
+    <?php endif; ?>
         <p><?= $block->escapeHtml(__('We\'ll email you an order confirmation with details and tracking info.')) ?></p>
     <?php endif;?>
     <?= $block->getAdditionalInfoHtml() ?>

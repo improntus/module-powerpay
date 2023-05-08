@@ -38,3 +38,5 @@ Widgets,Widgets
 "Transaction rejected.","Transacción rechazada."
 "There was an error processing your payment. Don't worry, no charge was made to your card.","Encontramos un error al procesar tu pago. No te preocupes, no te cobramos ningún monto de tu tarjeta."
 "Payment confirmed by PowerPay","Pago confirmado por Powerpay"
+"Custom success page","Página de éxito Powerpay"
+"Enable custom success page with order review","Activar la página de creación de orden con éxito de Powerpay, con resumen de compra"
