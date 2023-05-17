@@ -33,13 +33,13 @@ class WebService
         $this->baseUrl = 'https://api.powerpay.pe/api/';
     }
 
-    public function doRequest($endpoint, $clientId, $secret,  $data=null, $method=null, $storeId = null, $options=null)
+    public function doRequest($endpoint, $secret,  $data=null, $method=null, $storeId = null, $options=null)
     {
         if (null === $method) {
             $method = "POST";
         }
 
-        if ($this->helper->getConfigData($this->helper::SANDBOX, $storeId)) {
+        if ($this->helper->getSandbox($storeId)) {
             $this->baseUrl = 'https://mo-services-bbva-bnpl-pe-beta.moprestamo.com/api/';
         }
 

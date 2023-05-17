@@ -63,8 +63,7 @@ class Create implements ActionInterface
                 $this->powerPay->persistTransaction($order, $response, 'create');
                 $url = $response['redirection_url'];
             }
-        }
-        else {
+        } else {
             $url = "{$this->helper->getCallBackUrl()}?error=noresponse";
         }
         $resultRedirect = $this->redirectFactory->create();

@@ -3,7 +3,7 @@
         <input type="radio"
                name="payment[method]"
                class="radio"
-               data-bind="attr: {'id': getCode()}, value: getCode(), checked: isChecked, click: selectPaymentMethod, visible: isRadioButtonVisible()"/>
+               data-bind="attr: {'id': getCode()}, value: getCode(), checked: isChecked, click: selectPaymentMethod, visible: isRadioButtonVisible()">
         <div class="powerpay-payment-logo" data-bind="click: selectPaymentMethod">
             <img data-bind="click: selectPaymentMethod, attr: {alt: 'Powerpay Banner', src: getBanner()}" class="payment-banner-checkout" style="vertical-align: middle" width="160px" height="40px"/>
             <span style="margin-left:1rem ;"><strong>Compra ahora paga después. Desde 0% de interés.</strong></span>

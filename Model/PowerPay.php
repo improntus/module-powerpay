@@ -94,7 +94,7 @@ class PowerPay
     {
         $data = $this->getRequestData($order);
         try {
-            $response = $this->ws->doRequest($this->helper::EP_MERCHANT_TRANSACTIONS, null, $this->helper->getSecret(), $data);
+            $response = $this->ws->doRequest($this->helper::EP_MERCHANT_TRANSACTIONS, $this->helper->getSecret(), $data);
         } catch (\Exception $e) {
             $this->helper->log($e->getMessage());
             throw new \Exception($e->getMessage());

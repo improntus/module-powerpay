@@ -15,7 +15,7 @@
         <?php  else :?>
             <p><?= $block->escapeHtml(__('Your order # is: <span>%1</span>.', $block->getOrderId()), ['span']) ?></p>
         <?php endif;?>
-        <?php if($block->getCustomSuccess()) : ?>
+        <?php if ($block->getCustomSuccess()) : ?>
         <?php if($orderData = $block->getOrderData()) : ?>
             <?= '<strong>' . $escaper->escapeHtml($orderData->getCustomerFirstname()) . '</strong>' . $escaper->escapeHtml(__(' your order was placed successfully.')) ?>
             <div>
@@ -35,7 +35,7 @@
                             <div><strong><?= $escaper->escapeHtml($product['product']->getName())?></strong></div>
                             <div><img src="<?= $escaper->escapeHtml($block->getProductImage($product['product'])) ?>" alt=""></div>
                             <div><strong><?= $escaper->escapeHtml(__('Quantity: ' . round($product['qty'])))?></strong></div>
-                            <div><strong><?= ($product['product']->getFormattedPrice())?></strong></div>
+                            <div><strong><?= $escaper->escapeHtml($block->getProductPrice($product['product']))?></strong></div>
                         </div>
                         <?php if ($i > 1 && $i%3 === 0) : ?>
                     </tr>
@@ -49,7 +49,7 @@
                 </div>
             </div>
             <div>
-                <?= '<strong> ' . $escaper->escapeHtml(__('Subtotal: ' )) . '</strong>' .  number_format($orderData->getSubtotal(), 2, '.', ''); ?>
+                <?= '<strong> ' . $escaper->escapeHtml(__('Subtotal: ' )) . '</strong>' .  $escaper->escapeHtml(number_format($orderData->getSubtotal(), 2, '.', '')); ?>
             </div>
             <p></p>
             <hr>

@@ -7,10 +7,12 @@ use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Sales\Model\Order;
 use Magento\Catalog\Helper\Image;
 use Improntus\PowerPay\Helper\Data;
+use Magento\Framework\Pricing\PriceCurrencyInterface;
 
 class Success extends \Magento\Checkout\Block\Onepage\Success
 {
 
+    private $pci;
     /**
      * @var Data
      */
@@ -36,9 +38,11 @@ class Success extends \Magento\Checkout\Block\Onepage\Success
         OrderRepositoryInterface $orderRepository,
         Image $imageHelper,
         Data $helper,
+        PriceCurrencyInterface $pci,
         array $data = []
     )
     {
+        $this->pci = $pci;
         $this->helper = $helper;
         $this->checkoutSession = $checkoutSession;
         $this->imageHelper = $imageHelper;
@@ -92,6 +96,15 @@ class Success extends \Magento\Checkout\Block\Onepage\Success
     public function getCustomSuccess()
     {
         return $this->helper->getCustomSuccess($this->_storeManager->getStore()->getId());
+    }
+
+    /**
+     * @param $product
+     * @return string
+     */
+    public function getProductPrice($product)
+    {
+        return $this->pci->format($product->getPrice(), false);
     }
 
 }
