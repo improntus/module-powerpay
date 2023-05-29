@@ -10,28 +10,25 @@ use Magento\Store\Model\StoreManagerInterface;
 
 class Data
 {
-    const CONFIG_ROOT = 'payment/powerpay/';
-    const CLIENTID = 'clientid';
-    const SECRET = 'secret';
-    const SANDBOX = 'sandbox';
-    const USER_AUTHENTICATED = 1;
-    const INCOMPLETE_CREDENTIALS = 0;
-    const ACTIVE = 'active';
-    const TITLE = 'title';
-    const DEBUG = 'debug';
-    const MERCHANT_ID = 'merchant_id';
-    const CONCEPT = 'concept';
-    const CANCEL_HOURS = 'cancel_hours';
-    const WIDGETS_ENABLED = 'widgets';
-    const PRODUCT_WIDGET = 'product_widget';
-    const HEADER_WIDGET = 'header_widget';
-    const BANNER_WIDGET = 'banner_widget';
-    const CHECKOUT_WIDGET = 'checkout_widget';
-
-    const CUSTOM_SUCCESS = 'custom_success';
-
-
-    const EP_MERCHANT_TRANSACTIONS = 'merchant-transactions';
+    private const CONFIG_ROOT = 'payment/powerpay/';
+    public const CLIENTID = 'clientid';
+    public const SECRET = 'secret';
+    public const SANDBOX = 'sandbox';
+    public const USER_AUTHENTICATED = 1;
+    public const INCOMPLETE_CREDENTIALS = 0;
+    public const ACTIVE = 'active';
+    public const TITLE = 'title';
+    public const DEBUG = 'debug';
+    public const MERCHANT_ID = 'merchant_id';
+    public const CONCEPT = 'concept';
+    public const CANCEL_HOURS = 'cancel_hours';
+    public const WIDGETS_ENABLED = 'widgets';
+    public const PRODUCT_WIDGET = 'product_widget';
+    public const HEADER_WIDGET = 'header_widget';
+    public const BANNER_WIDGET = 'banner_widget';
+    public const CHECKOUT_WIDGET = 'checkout_widget';
+    public const CUSTOM_SUCCESS = 'custom_success';
+    public const EP_MERCHANT_TRANSACTIONS = 'merchant-transactions';
 
     /**
      * @var Logger

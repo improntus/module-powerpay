@@ -9,7 +9,7 @@ use Improntus\PowerPay\Model\PowerPay;
 
 class Callback implements CallbackInterface
 {
-
+    private const CONCATENATOR = '~';
     /**
      * @var PowerPay
      */
@@ -28,45 +28,66 @@ class Callback implements CallbackInterface
         Http $http,
         Data $helper,
         PowerPay $powerPay
-    )
-    {
+    ) {
         $this->powerPay = $powerPay;
         $this->helper = $helper;
         $this->http = $http;
     }
 
     /**
-     * @inheritDoc
+     * @param $data
+     * @return bool
+     * @throws \Magento\Framework\Webapi\Exception
      */
     public function updateStatus($data)
     {
-        $response = new \Magento\Framework\Webapi\Exception(__('Authentication failed'));
-        $basicAuth = $this->http->getHeader('Authorization');
         /** agregar el storeID de la orden para traer el secret */
-        if (base64_decode($basicAuth) === $this->helper->getSecret()) {
-            if (isset($data['id']) &&
-                isset($data['status']) &&
-                isset($data['expired_at']) &&
-                isset($data['created_at']) &&
-                isset($data['signature'])
-            ) {
-                $order = $this->powerPay->getOrderByTransactionId($data['id']);
-                if (strtolower($data['status']) == 'processed') {
-                    if ($this->powerPay->invoice($order, $data['id'])) {
-                        return true;
+        if (
+            isset($data['id']) &&
+            isset($data['status']) &&
+            isset($data['expired_at']) &&
+            isset($data['created_at']) &&
+            isset($data['signature'])
+        ) {
+            if ($transaction = $this->powerPay->checkIfExists($data['id'])) {
+                $transactionId = $transaction->getPowerPayTransactionId();
+                $transactionCreatedAt = $transaction->getCreatedAt();
+                $unhashedSignature =
+                    $this->helper->getSecret() .
+                    $this::CONCATENATOR .
+                    $transactionId .
+                    $this::CONCATENATOR .
+                    $transactionCreatedAt;
+
+                $signature = hash('sha256', $unhashedSignature);
+                if ($signature === $data['signature']) {
+                    $order = $this->powerPay->getOrderByTransactionId($data['id']);
+                    if (strtolower($data['status']) == 'processed') {
+                        if ($this->powerPay->invoice($order, $data['id'])) {
+                            return true;
+                        } else {
+                            $response = new \Magento\Framework\Webapi\Exception(__('Order could not be invoiced.'));
+                        }
                     } else {
-                        $response = new \Magento\Framework\Webapi\Exception(__('Order could not be invoiced.'));
+                        return $this->processCancel($order, $data['status']);
                     }
                 } else {
-                    return $this->processCancel($order, $data['status']);
+                    $response = new \Magento\Framework\Webapi\Exception(__('Authentication failed'));
                 }
             } else {
-                $response =  new \Magento\Framework\Webapi\Exception(__('Invalid request data.'));
+                $response = new \Magento\Framework\Webapi\Exception(__('There was no transaction with requested Id.'));
             }
+        } else {
+            $response =  new \Magento\Framework\Webapi\Exception(__('Invalid request data.'));
         }
         throw $response;
     }
 
+    /**
+     * @param $order
+     * @param $status
+     * @return bool
+     */
     private function processCancel($order, $status)
     {
         $status = strtolower($status);

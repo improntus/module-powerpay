@@ -117,7 +117,6 @@ class PowerPay
             'callback_url' => $this->helper->getCallBackUrl($token),
             'values' => [
                 'merchant_id' => $this->helper->getMerchantId($order->getStoreId()),
-//                'company_name' => $this->helper->getCompanyName($order->getStoreId()),  */powerpay pide que no se mande  company_name*/
                 'currency' => 'PEN',
                 'document_number' => $customerData['document_number'],
                 'document_type' => 'DNI',
@@ -216,7 +215,8 @@ class PowerPay
      * @return void
      * @throws LocalizedException
      */
-    public function persistTransaction($order, $result, $flow = 'response') {
+    public function persistTransaction($order, $result, $flow = 'response')
+    {
         try {
             if ($flow !== 'response') {
                 $transactionId = $result['id'];
@@ -253,14 +253,13 @@ class PowerPay
     public function cancelOrder($order, $message)
     {
         try {
-            if ($order->canCancel()){
+            if ($order->canCancel()) {
                 $order->cancel();
                 $order->setState(Order::STATE_CANCELED);
                 $order->addCommentToStatusHistory($message, Order::STATE_CANCELED);
                 $this->orderRepository->save($order);
                 return true;
             }
-
         } catch (\Exception $e) {
             $this->helper->log($e->getMessage());
             return false;
@@ -270,13 +269,29 @@ class PowerPay
 
     /**
      * @param $id
-     * @return \Magento\Sales\Api\Data\OrderInterface
+     * @return false|\Magento\Sales\Api\Data\OrderInterface
      * @throws LocalizedException
      */
     public function getOrderByTransactionId($id)
     {
         $transaction = $this->transactionRepository->get($id);
-        if ($transaction->getStatus())
-        return $this->orderRepository->get($transaction->getOrderId());
+        if ($transaction->getStatus()) {
+            return $this->orderRepository->get($transaction->getOrderId());
+        }
+        return false;
+    }
+
+    /**
+     * @param $id
+     * @return false|\Improntus\PowerPay\Api\Data\TransactionInterface
+     */
+    public function checkIfExists($id)
+    {
+        try {
+            return $this->transactionRepository->get($id);
+        } catch (\Exception $e) {
+            $this->helper->log($e->getMessage());
+            return false;
+        }
     }
 }
