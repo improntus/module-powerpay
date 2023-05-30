@@ -3,13 +3,18 @@
 namespace Improntus\PowerPay\Model\Api;
 
 use Improntus\PowerPay\Api\CallbackInterface;
-use Magento\Framework\App\Request\Http;
 use Improntus\PowerPay\Helper\Data;
 use Improntus\PowerPay\Model\PowerPay;
+use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
 
 class Callback implements CallbackInterface
 {
     private const CONCATENATOR = '~';
+
+    /**
+     * @var TimezoneInterface
+     */
+    private $timezone;
     /**
      * @var PowerPay
      */
@@ -19,29 +24,24 @@ class Callback implements CallbackInterface
      */
     private $helper;
 
-    /**
-     * @var Http
-     */
-    private $http;
-
     public function __construct(
-        Http $http,
         Data $helper,
-        PowerPay $powerPay
+        PowerPay $powerPay,
+        TimezoneInterface $timezone
     ) {
+        $this->timezone = $timezone;
         $this->powerPay = $powerPay;
         $this->helper = $helper;
-        $this->http = $http;
     }
 
     /**
      * @param $data
      * @return bool
      * @throws \Magento\Framework\Webapi\Exception
+     * @throws \Exception
      */
     public function updateStatus($data)
     {
-        /** agregar el storeID de la orden para traer el secret */
         if (
             isset($data['id']) &&
             isset($data['status']) &&
@@ -50,10 +50,15 @@ class Callback implements CallbackInterface
             isset($data['signature'])
         ) {
             if ($transaction = $this->powerPay->checkIfExists($data['id'])) {
+                $order = $this->powerPay->getOrderByTransactionId($data['id']);
                 $transactionId = $transaction->getPowerPayTransactionId();
                 $transactionCreatedAt = $transaction->getCreatedAt();
+                $transactionCreatedAt = $this
+                    ->timezone
+                    ->date(new \DateTime($transactionCreatedAt))
+                    ->format('Y-m-d H:i:s');
                 $unhashedSignature =
-                    $this->helper->getSecret() .
+                    $this->helper->getSecret($order->getStoreId()) .
                     $this::CONCATENATOR .
                     $transactionId .
                     $this::CONCATENATOR .
@@ -61,7 +66,6 @@ class Callback implements CallbackInterface
 
                 $signature = hash('sha256', $unhashedSignature);
                 if ($signature === $data['signature']) {
-                    $order = $this->powerPay->getOrderByTransactionId($data['id']);
                     if (strtolower($data['status']) == 'processed') {
                         if ($this->powerPay->invoice($order, $data['id'])) {
                             return true;
