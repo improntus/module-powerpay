@@ -79,11 +79,12 @@ class Response implements ActionInterface
             }
             $this->powerPay->persistTransaction($order, $result);
             if ($result['status'] == 'processed') {
-                if ($this->powerPay->invoice($order,$transactionId)) {
-                    $this->helper->log("Order: {$order->getIncrementId()} invoiced succesfully.");
-                } else {
-                    $this->helper->log("Order: {$order->getIncrementId()} was NOT invoiced.");
-                }
+                /** order is only invoiced via webhook */
+//                if ($this->powerPay->invoice($order,$transactionId)) {
+//                    $this->helper->log("Order: {$order->getIncrementId()} invoiced succesfully.");
+//                } else {
+//                    $this->helper->log("Order: {$order->getIncrementId()} was NOT invoiced.");
+//                }
                 $path = 'checkout/onepage/success';
             } else {
                 $message = (__('Unexpected response from PowerPay'));
