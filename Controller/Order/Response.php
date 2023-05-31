@@ -36,7 +36,7 @@ class Response implements ActionInterface
     private $powerPay;
 
     public function __construct(
-        Session     $session,
+        Session $session,
         PowerPay $powerPay,
         RedirectFactory $redirectFactory,
         Data $helper,
@@ -69,8 +69,10 @@ class Response implements ActionInterface
         } elseif (isset($result['status'])) {
             $transactionId = $result['transaction_id'];
             $order = $this->session->getLastRealOrder();
-            if (!isset($result['token']) ||
-                $result['token'] !== $this->helper->generateToken($order)) {
+            if (
+                !isset($result['token']) ||
+                $result['token'] !== $this->helper->generateToken($order)
+            ) {
                 $message = (__('Invalid Token.'));
                 $this->powerPay->cancelOrder($order, $message);
                 $this->session->setErrorMessage($message);
@@ -85,6 +87,7 @@ class Response implements ActionInterface
 //                } else {
 //                    $this->helper->log("Order: {$order->getIncrementId()} was NOT invoiced.");
 //                }
+                $this->powerPay->addSuccessToStatusHistory($order);
                 $path = 'checkout/onepage/success';
             } else {
                 $message = (__('Unexpected response from PowerPay'));

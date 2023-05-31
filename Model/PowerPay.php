@@ -294,4 +294,15 @@ class PowerPay
             return false;
         }
     }
+
+    /**
+     * @param $order
+     * @return void
+     */
+    public function addSuccessToStatusHistory($order)
+    {
+        $message = (__('Payment confirmed by PowerPay, awaiting capture.'));
+        $order->addCommentToStatusHistory($message, Order::STATE_PAYMENT_REVIEW);
+        $this->orderRepository->save($order);
+    }
 }

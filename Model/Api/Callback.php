@@ -5,16 +5,11 @@ namespace Improntus\PowerPay\Model\Api;
 use Improntus\PowerPay\Api\CallbackInterface;
 use Improntus\PowerPay\Helper\Data;
 use Improntus\PowerPay\Model\PowerPay;
-use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
 
 class Callback implements CallbackInterface
 {
     private const CONCATENATOR = '~';
 
-    /**
-     * @var TimezoneInterface
-     */
-    private $timezone;
     /**
      * @var PowerPay
      */
@@ -26,10 +21,8 @@ class Callback implements CallbackInterface
 
     public function __construct(
         Data $helper,
-        PowerPay $powerPay,
-        TimezoneInterface $timezone
+        PowerPay $powerPay
     ) {
-        $this->timezone = $timezone;
         $this->powerPay = $powerPay;
         $this->helper = $helper;
     }
@@ -53,10 +46,6 @@ class Callback implements CallbackInterface
                 $order = $this->powerPay->getOrderByTransactionId($data['id']);
                 $transactionId = $transaction->getPowerPayTransactionId();
                 $transactionCreatedAt = $transaction->getCreatedAt();
-                $transactionCreatedAt = $this
-                    ->timezone
-                    ->date(new \DateTime($transactionCreatedAt))
-                    ->format('Y-m-d H:i:s');
                 $unhashedSignature =
                     $this->helper->getSecret($order->getStoreId()) .
                     $this::CONCATENATOR .
@@ -76,6 +65,13 @@ class Callback implements CallbackInterface
                         return $this->processCancel($order, $data['status']);
                     }
                 } else {
+                    $message = "Webhook Request: \n";
+                    foreach ($data as $key => $value) {
+                        $message .= "   {$key} => {$value} \n";
+                    }
+                    $message .= "<== End webhook request ==>";
+                    $this->helper->log($message);
+
                     $response = new \Magento\Framework\Webapi\Exception(__('Authentication failed'));
                 }
             } else {

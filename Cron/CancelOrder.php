@@ -12,11 +12,10 @@ use Magento\Sales\Model\ResourceModel\Order\Collection as OrderCollection;
 
 class CancelOrder
 {
-
-    CONST PENDING = 'pending';
-    CONST EXPIRED = 'expired';
-    CONST CANCELED = 'canceled';
-    CONST PAYMENT_METHOD = 'powerpay';
+    private const PENDING = 'pending';
+    private const EXPIRED = 'expired';
+    private const CANCELED = 'canceled';
+    private const PAYMENT_METHOD = 'powerpay';
 
     /**
      * @var OrderCollection
@@ -54,8 +53,7 @@ class CancelOrder
         Data $helper,
         PowerPay $powerPay,
         OrderCollection $orderCollection
-    )
-    {
+    ) {
         $this->orderCollection = $orderCollection;
         $this->powerPay = $powerPay;
         $this->helper = $helper;
@@ -63,7 +61,6 @@ class CancelOrder
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
         $this->transactionRepository = $transactionRepository;
     }
-
 
     /**
      * @return void
@@ -73,12 +70,15 @@ class CancelOrder
         $collection = $this->getOrderCollection(self::PENDING);
 
         foreach ($collection as $order) {
-            if ($order->getState() !== Order::STATE_NEW) {
+            if (
+                $order->getState() !== Order::STATE_NEW ||
+                $order->getStatus() === Order::STATE_PAYMENT_REVIEW
+            ) {
                 continue;
             }
             $datetime1 = date_create($order->getCreatedAt());
             $datetime2 = date_create(date('Y-m-d H:i:s', strtotime("now")));
-            $interval = abs(($datetime1->getTimestamp() - $datetime2->getTimestamp())/3600);
+            $interval = abs(($datetime1->getTimestamp() - $datetime2->getTimestamp()) / 3600);
             $cancelHours = $this->helper->getCancelHours($order->getStore()->getId());
             if ($cancelHours == '') {
                 $cancelHours = 24;
@@ -133,15 +133,14 @@ class CancelOrder
      */
     private function getOrderCollection($status)
     {
-            $this->orderCollection->getSelect()
-                ->joinLeft(["sop" => "sales_order_payment"],
-                    'main_table.entity_id = sop.parent_id',
-                    array('method')
-                )
-                ->where('sop.method = ?',$this::PAYMENT_METHOD );
-            $this->orderCollection->addFieldToFilter('status', $status);
-            return $this->orderCollection;
-
+        $this->orderCollection->getSelect()
+            ->joinLeft(
+                ["sop" => "sales_order_payment"],
+                'main_table.entity_id = sop.parent_id',
+                array('method')
+            )
+            ->where('sop.method = ?', $this::PAYMENT_METHOD);
+        $this->orderCollection->addFieldToFilter('status', $status);
+        return $this->orderCollection;
     }
-
 }
