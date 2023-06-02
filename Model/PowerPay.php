@@ -7,6 +7,7 @@ use Improntus\PowerPay\Helper\Data;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Phrase;
+use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Api\Data\TransactionInterface;
 use Magento\Sales\Api\InvoiceManagementInterface;
 use Magento\Sales\Api\InvoiceRepositoryInterface;
@@ -296,13 +297,15 @@ class PowerPay
     }
 
     /**
-     * @param $order
+     * @param OrderInterface $order
      * @return void
      */
     public function addSuccessToStatusHistory($order)
     {
-        $message = (__('Payment confirmed by PowerPay, awaiting capture.'));
-        $order->addCommentToStatusHistory($message, Order::STATE_PAYMENT_REVIEW);
-        $this->orderRepository->save($order);
+        if ($order->getState() === Order::STATE_NEW) {
+            $message = (__('Payment confirmed by PowerPay, awaiting capture.'));
+            $order->addCommentToStatusHistory($message, Order::STATE_PAYMENT_REVIEW);
+            $this->orderRepository->save($order);
+        }
     }
 }

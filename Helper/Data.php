@@ -278,11 +278,15 @@ class Data
      * @param $message
      * @return void
      */
-    public function log($message)
+    public function log($message, $type = 'debug')
     {
         if ($this->isDebugEnabled()) {
-            $this->logger->setName('powerpay_payments.log');
-            $this->logger->info($message);
+            $this->logger->setName('Powerpay');
+            if ($type !== 'debug') {
+                $this->logger->info($message);
+            } else {
+                $this->logger->debug($message);
+            }
         }
     }
 

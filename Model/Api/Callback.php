@@ -45,7 +45,7 @@ class Callback implements CallbackInterface
             if ($transaction = $this->powerPay->checkIfExists($data['id'])) {
                 $order = $this->powerPay->getOrderByTransactionId($data['id']);
                 $transactionId = $transaction->getPowerPayTransactionId();
-                $transactionCreatedAt = $transaction->getCreatedAt();
+                $transactionCreatedAt = $data['created_at'];
                 $unhashedSignature =
                     $this->helper->getSecret($order->getStoreId()) .
                     $this::CONCATENATOR .
@@ -65,11 +65,12 @@ class Callback implements CallbackInterface
                         return $this->processCancel($order, $data['status']);
                     }
                 } else {
-                    $message = "Webhook Request: \n";
+                    $message = "Failed AUTH Webhook Request: \n";
                     foreach ($data as $key => $value) {
                         $message .= "   {$key} => {$value} \n";
                     }
-                    $message .= "<== End webhook request ==>";
+                    $message .= "<== End webhook request ==> \n";
+                    $message .= "Local signature: {$signature} \n";
                     $this->helper->log($message);
 
                     $response = new \Magento\Framework\Webapi\Exception(__('Authentication failed'));
