@@ -4,11 +4,7 @@
   "description": "Powerpay",
   "type": "magento2-module",
   "require": {
-    "magento/framework": "*"
   },
-  "license": [
-    "Proprietary"
-  ],
   "autoload": {
     "files": [
       "registration.php"
