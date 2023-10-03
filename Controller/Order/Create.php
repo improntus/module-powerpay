@@ -33,7 +33,7 @@ class Create implements ActionInterface
         Session     $session,
         PowerPay $powerPay,
         RedirectFactory $redirectFactory,
-        Data $helper,
+        Data $helper
     ) {
         $this->helper = $helper;
         $this->redirectFactory = $redirectFactory;

@@ -70,7 +70,7 @@ class PowerPay
         InvoiceRepositoryInterface      $invoiceRepository,
         OrderSender                     $orderSender,
         TransactionRepositoryInterface $transactionRepository,
-        TransactionFactory $transactionFactory,
+        TransactionFactory $transactionFactory
     )
     {
         $this->transactionFactory = $transactionFactory;
