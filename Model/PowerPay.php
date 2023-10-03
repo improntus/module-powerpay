@@ -17,9 +17,14 @@ use Magento\Sales\Api\TransactionRepositoryInterface as PaymentTransactionReposi
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Email\Sender\OrderSender;
 use Improntus\PowerPay\Api\TransactionRepositoryInterface;
+use Magento\Framework\App\ResourceConnection;
 
 class PowerPay
 {
+    /**
+     * @var ResourceConnection
+     */
+    private $resourceConnection;
     /**
      * @var TransactionRepositoryInterface
      */
@@ -70,9 +75,11 @@ class PowerPay
         InvoiceRepositoryInterface      $invoiceRepository,
         OrderSender                     $orderSender,
         TransactionRepositoryInterface $transactionRepository,
-        TransactionFactory $transactionFactory
+        TransactionFactory $transactionFactory,
+        ResourceConnection $resourceConnection
     )
     {
+        $this->resourceConnection = $resourceConnection;
         $this->transactionFactory = $transactionFactory;
         $this->transactionRepository = $transactionRepository;
         $this->orderSender = $orderSender;
@@ -163,6 +170,8 @@ class PowerPay
         if (!$order->canInvoice() || $order->hasInvoices()) {
             return false;
         }
+        $connection = $this->resourceConnection->getConnection();
+        $connection->beginTransaction();
         try {
             $invoice = $this->invoiceManagement->prepareInvoice($order);
             $invoice->register();
@@ -189,10 +198,13 @@ class PowerPay
             $ppTransaction = $this->transactionRepository->get($transactionId);
             $ppTransaction->setStatus('processed');
             $this->transactionRepository->save($ppTransaction);
-
+            $connection->commit();
             return true;
         } catch (\Exception $e) {
-            $this->helper->log($e->getMessage());
+            $connection->rollBack();
+            $message = "Invoice creating for order {$order->getIncrementId()} failed: \n";
+            $message .= $e->getMessage() . "\n";
+            $this->helper->log($message);
             return false;
         }
     }

@@ -13,3 +13,7 @@ CHANGELOG
 ### 1.1.4 (2023-10-03)
 
 * Minor retrocompatibility fixes
+
+### 1.1.5 (2023-10-03)
+
+* Added transaction commit and rollback in invoice generation to avoid DB inconsistencies in case of exception.
