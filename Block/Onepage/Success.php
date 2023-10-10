@@ -55,8 +55,9 @@ class Success extends \Magento\Checkout\Block\Onepage\Success
      */
     public function getOrderData()
     {
-        if ($this->checkoutSession->getLastRealOrder()->getId()) {
-            return $this->orderRepository->get($this->checkoutSession->getLastRealOrder()->getId());
+        $orderId = $this->checkoutSession->getLastRealOrder()->getId();
+        if ($orderId) {
+            return $this->orderRepository->get($orderId);
         } else {
             return false;
         }

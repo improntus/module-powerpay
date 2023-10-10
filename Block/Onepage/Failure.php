@@ -6,7 +6,14 @@ use Magento\Sales\Api\OrderRepositoryInterface;
 
 class Failure extends \Magento\Checkout\Block\Onepage\Failure
 {
+    /**
+     * @var \Magento\Checkout\Model\Session
+     */
+    private $checkoutSession;
 
+    /**
+     * @var OrderRepositoryInterface
+     */
     private $orderRepository;
 
     public function __construct(
@@ -16,6 +23,7 @@ class Failure extends \Magento\Checkout\Block\Onepage\Failure
         array $data = []
     )
     {
+        $this->checkoutSession = $checkoutSession;
         $this->orderRepository = $orderRepository;
         parent::__construct($context, $checkoutSession, $data);
     }
@@ -25,8 +33,9 @@ class Failure extends \Magento\Checkout\Block\Onepage\Failure
      */
     public function getOrderData()
     {
-        if ($this->getRealOrderId()) {
-            return $this->orderRepository->get($this->getRealOrderId());
+        $orderId = $this->checkoutSession->getLastRealOrder()->getId();
+        if ($orderId) {
+            return $this->orderRepository->get($orderId);
         } else {
             return false;
         }

@@ -21,3 +21,7 @@ CHANGELOG
 ### 1.1.6 (2023-10-10)
 
 * Minor improvements in transaction data sent
+
+### 1.1.7 (2023-10-10)
+
+* Error catching in failure and success pages
