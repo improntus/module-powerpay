@@ -150,7 +150,7 @@ class PowerPay
     {
         $address = $order->getBillingAddress();
         return [
-            'document_number' => $order->getCustomerTaxvat() ?? '',
+            'document_number' => $order->getCustomerTaxvat() ?? $address->getVatId() ?? '',
             'first_name' => $address->getFirstname(),
             'last_name' => $address->getLastname(),
             'email' => $order->getCustomerEmail(),

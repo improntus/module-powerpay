@@ -17,3 +17,7 @@ CHANGELOG
 ### 1.1.5 (2023-10-03)
 
 * Added transaction commit and rollback in invoice generation to avoid DB inconsistencies in case of exception.
+
+### 1.1.6 (2023-10-10)
+
+* Minor improvements in transaction data sent
