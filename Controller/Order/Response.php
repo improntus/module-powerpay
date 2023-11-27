@@ -97,7 +97,14 @@ class Response implements ActionInterface
                     $message = (__('The payment date has expired.'));
                 }
                 $this->session->setErrorMessage($message);
-                $this->powerPay->cancelOrder($order, $message);
+                /**
+                 * cancelOrder from Response controller commented because
+                 * in some cases when the webhook timing is the same as the controller
+                 * the product cancelation is executed twice which generates
+                 * double entry in the reservations table.
+                 * Order should be canceled by webhook or cron.
+                 */
+//                $this->powerPay->cancelOrder($order, $message);
             }
         }
         $resultRedirect->setPath($path);

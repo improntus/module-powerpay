@@ -25,3 +25,7 @@ CHANGELOG
 ### 1.1.7 (2023-10-10)
 
 * Error catching in failure and success pages
+
+### 1.1.8 (2023-11-27)
+
+* Fixed bug when in some cases order item was canceled twice
