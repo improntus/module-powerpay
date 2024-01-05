@@ -16,7 +16,7 @@ CHANGELOG
 
 ### 1.1.5 (2023-10-03)
 
-* Added transaction commit and rollback in invoice generation to avoid DB inconsistencies in case of exception.
+* Added transaction commit and rollback in invoice generation to avoid DB inconsistencies in case of exception
 
 ### 1.1.6 (2023-10-10)
 
@@ -29,3 +29,7 @@ CHANGELOG
 ### 1.1.8 (2023-11-27)
 
 * Fixed bug when in some cases order item was canceled twice
+
+### 1.1.9 (2024-01-05)
+
+* Fixed a bug where the module status was not considered when displaying widgets

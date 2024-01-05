@@ -57,7 +57,7 @@ class Widgets implements \Magento\Framework\View\Element\Block\ArgumentInterface
      */
     public function getProductWidgetEnabled($storeId)
     {
-        return $this->helper->getProductWidgetEnabled($storeId);
+        return $this->helper->isActive() && $this->helper->getProductWidgetEnabled($storeId);
     }
 
     /**
@@ -66,7 +66,7 @@ class Widgets implements \Magento\Framework\View\Element\Block\ArgumentInterface
      */
     public function getBannerWidgetEnabled($storeId)
     {
-        return $this->helper->getBannerWidgetEnabled($storeId);
+        return $this->helper->isActive() && $this->helper->getBannerWidgetEnabled($storeId);
     }
 
     /**
@@ -75,6 +75,6 @@ class Widgets implements \Magento\Framework\View\Element\Block\ArgumentInterface
      */
     public function getHeaderWidgetEnabled($storeId)
     {
-        return $this->helper->getHeaderWidgetEnabled($storeId);
+        return $this->helper->isActive() && $this->helper->getHeaderWidgetEnabled($storeId);
     }
 }
