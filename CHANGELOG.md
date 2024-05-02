@@ -33,3 +33,7 @@ CHANGELOG
 ### 1.1.9 (2024-01-05)
 
 * Fixed a bug where the module status was not considered when displaying widgets
+
+### 1.1.10 (2024-05-02)
+
+* Php 8.2 Compatibility

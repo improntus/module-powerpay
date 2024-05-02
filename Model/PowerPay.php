@@ -65,6 +65,11 @@ class PowerPay
      */
     private $helper;
 
+    /**
+     * @var TransactionFactory
+     */
+    private $transactionFactory;
+
     public function __construct(
         WebService                      $ws,
         Data                            $helper,
@@ -74,11 +79,10 @@ class PowerPay
         PaymentTransactionRepository    $paymentTransactionRepository,
         InvoiceRepositoryInterface      $invoiceRepository,
         OrderSender                     $orderSender,
-        TransactionRepositoryInterface $transactionRepository,
-        TransactionFactory $transactionFactory,
-        ResourceConnection $resourceConnection
-    )
-    {
+        TransactionRepositoryInterface  $transactionRepository,
+        TransactionFactory              $transactionFactory,
+        ResourceConnection              $resourceConnection
+    ) {
         $this->resourceConnection = $resourceConnection;
         $this->transactionFactory = $transactionFactory;
         $this->transactionRepository = $transactionRepository;
@@ -102,7 +106,11 @@ class PowerPay
     {
         $data = $this->getRequestData($order);
         try {
-            $response = $this->ws->doRequest($this->helper::EP_MERCHANT_TRANSACTIONS, $this->helper->getSecret(), $data);
+            $response = $this->ws->doRequest(
+                $this->helper::EP_MERCHANT_TRANSACTIONS,
+                $this->helper->getSecret(),
+                $data
+            );
         } catch (\Exception $e) {
             $this->helper->log($e->getMessage());
             throw new \Exception($e->getMessage());
@@ -156,7 +164,8 @@ class PowerPay
             'email' => $order->getCustomerEmail(),
             'phone_number' => $address->getTelephone() ?? '',
             'shipping_postal_code' => $address->getPostcode() ?? '',
-            'shipping_address' => "{$address->getStreetLine(1)} {$address->getStreetLine(2)} {$address->getStreetLine(3)} {$address->getStreetLine(4)}",
+            'shipping_address' =>
+                "{$address->getStreetLine(1)} {$address->getStreetLine(2)} {$address->getStreetLine(3)} {$address->getStreetLine(4)}",
         ];
     }
 
