@@ -14,7 +14,6 @@ class CancelOrder
 {
     private const PENDING = 'pending';
     private const EXPIRED = 'expired';
-    private const CANCELED = 'canceled';
     private const PAYMENT_METHOD = 'powerpay';
 
     /**

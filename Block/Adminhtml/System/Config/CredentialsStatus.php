@@ -33,7 +33,7 @@ class CredentialsStatus extends \Magento\Config\Block\System\Config\Form\Field
      */
     protected function _getElementHtml(AbstractElement $element)
     {
-         if ($this->powerPayHelper->validateCredentials() === $this->powerPayHelper::USER_AUTHENTICATED) {
+         if ($this->powerPayHelper->validateCredentials() === PowerPayHelper::USER_AUTHENTICATED) {
              $status = 'success';
              $label = __("Credentials are filled. But couldn't be verified");
          } else {
