@@ -40,3 +40,6 @@ Widgets,Widgets
 "Payment confirmed by PowerPay","Pago confirmado por Powerpay"
 "Custom success page","Página de éxito Powerpay"
 "Enable custom success page with order review","Activar la página de creación de orden con éxito de Powerpay, con resumen de compra"
+"Default (Powerpay)","Por defecto (Powerpay)"
+Neutral,Neutral
+"Product page widget. ""Default"" renders Powerpay's own widget. ""Neutral"" renders a local widget (installments + Powerpay logo) whose ""Más información"" link opens the same Powerpay modal.","Widget de la página de producto. ""Por defecto"" muestra el widget propio de Powerpay. ""Neutral"" muestra un widget local (cuotas + logo de Powerpay) cuyo enlace de ""Más información"" abre el mismo modal de Powerpay."

@@ -1,6 +1,12 @@
 CHANGELOG
 ---------
 
+### 1.2.0 (2026-07-14)
+
+* Added the Neutral product page widget: a local widget showing "Paga en 3 cuotas de X sin intereses" with the Powerpay logo and an info icon that opens the Powerpay financing modal
+* The Neutral widget takes its price from the catalog price info, so the amount is currency-converted, tax-aware and correct for each product type. It is not rendered on grouped products or when the final price is zero
+* Fixed constant access through `$this::CONSTANT` instead of `self::CONSTANT`, which is unreliable in Magento's generated classes
+
 ### 1.1.11 (2025-06-24)
 
 * Added Adobe Commerce / Magento Open Source 2.4.8 compatibility

@@ -30,6 +30,11 @@ class Data
     public const CUSTOM_SUCCESS = 'custom_success';
     public const EP_MERCHANT_TRANSACTIONS = 'merchant-transactions';
 
+    /* PDP widget modes (payment/powerpay/product_widget) */
+    public const PRODUCT_WIDGET_DISABLED = 0;
+    public const PRODUCT_WIDGET_DEFAULT = 1;
+    public const PRODUCT_WIDGET_NEUTRAL = 2;
+
     /**
      * @var Logger
      */
@@ -76,7 +81,7 @@ class Data
      */
     public function getConfigData($value, $storeId = null)
     {
-        $path = $this::CONFIG_ROOT . $value;
+        $path = self::CONFIG_ROOT . $value;
         /* client_id and secret must be decrypted after retrieved */
         if ($value === self::CLIENTID || $value === self::SECRET) {
             return $this->encryptor->decrypt($this->scopeConfig->getValue($path, \Magento\Store\Model\ScopeInterface::SCOPE_STORE, $storeId) ?? '');
@@ -103,9 +108,9 @@ class Data
      */
     public function validateCredentials()
     {
-        $result = $this::INCOMPLETE_CREDENTIALS;
-        if ($this->getConfigData($this::CLIENTID) && $this->getConfigData($this::SECRET)) {
-            $result = $this::USER_AUTHENTICATED;
+        $result = self::INCOMPLETE_CREDENTIALS;
+        if ($this->getConfigData(self::CLIENTID) && $this->getConfigData(self::SECRET)) {
+            $result = self::USER_AUTHENTICATED;
         }
         return $result;
     }
@@ -115,7 +120,7 @@ class Data
      */
     public function isActive()
     {
-        return (bool)$this->getConfigData($this::ACTIVE);
+        return (bool)$this->getConfigData(self::ACTIVE);
     }
 
     /**
@@ -123,7 +128,7 @@ class Data
      */
     public function getTitle($storeId = null)
     {
-        return $this->getConfigData($this::TITLE, $storeId);
+        return $this->getConfigData(self::TITLE, $storeId);
     }
 
     /**
@@ -131,7 +136,7 @@ class Data
      */
     public function getSecret($storeId = null)
     {
-        return $this->getConfigData($this::SECRET, $storeId);
+        return $this->getConfigData(self::SECRET, $storeId);
     }
 
     /**
@@ -139,7 +144,7 @@ class Data
      */
     public function getClientId($storeId = null)
     {
-        return $this->getConfigData($this::CLIENTID, $storeId);
+        return $this->getConfigData(self::CLIENTID, $storeId);
     }
 
     /**
@@ -148,7 +153,7 @@ class Data
      */
     public function isDebugEnabled($storeId = null)
     {
-        return (bool)$this->getConfigData($this::DEBUG, $storeId);
+        return (bool)$this->getConfigData(self::DEBUG, $storeId);
     }
 
     /**
@@ -179,7 +184,7 @@ class Data
      */
     public function getMerchantId($storeId = null)
     {
-        return $this->getConfigData($this::MERCHANT_ID, $storeId);
+        return $this->getConfigData(self::MERCHANT_ID, $storeId);
     }
 
     /**
@@ -188,7 +193,7 @@ class Data
      */
     public function getPaymentConcept($storeId = null)
     {
-        return $this->getConfigData($this::CONCEPT, $storeId);
+        return $this->getConfigData(self::CONCEPT, $storeId);
     }
     /**
      * @param $storeId
@@ -206,7 +211,7 @@ class Data
      */
     public function getSandbox($storeId = null)
     {
-        return (bool)$this->getConfigData($this::SANDBOX, $storeId);
+        return (bool)$this->getConfigData(self::SANDBOX, $storeId);
     }
 
 
@@ -216,7 +221,7 @@ class Data
      */
     public function getCancelHours($storeId = null)
     {
-        return $this->getConfigData($this::CANCEL_HOURS, $storeId) ?? '';
+        return $this->getConfigData(self::CANCEL_HOURS, $storeId) ?? '';
     }
 
     /**
@@ -225,16 +230,18 @@ class Data
      */
     public function getWidgetsEnabled($storeId = null)
     {
-        return (bool)$this->getConfigData($this::WIDGETS_ENABLED, $storeId);
+        return (bool)$this->getConfigData(self::WIDGETS_ENABLED, $storeId);
     }
 
     /**
+     * PDP widget mode: disabled (0), default Powerpay widget (1) or neutral widget (2).
+     *
      * @param $storeId
-     * @return bool
+     * @return int
      */
-    public function getProductWidgetEnabled($storeId = null)
+    public function getProductWidgetMode($storeId = null)
     {
-        return (bool)$this->getConfigData($this::PRODUCT_WIDGET, $storeId);
+        return (int)$this->getConfigData(self::PRODUCT_WIDGET, $storeId);
     }
 
     /**
@@ -243,7 +250,7 @@ class Data
      */
     public function getHeaderWidgetEnabled($storeId = null)
     {
-        return (bool)$this->getConfigData($this::HEADER_WIDGET, $storeId);
+        return (bool)$this->getConfigData(self::HEADER_WIDGET, $storeId);
     }
 
     /**
@@ -252,7 +259,7 @@ class Data
      */
     public function getBannerWidgetEnabled($storeId = null)
     {
-        return (bool)$this->getConfigData($this::BANNER_WIDGET, $storeId);
+        return (bool)$this->getConfigData(self::BANNER_WIDGET, $storeId);
     }
 
 
@@ -262,7 +269,7 @@ class Data
      */
     public function getCheckoutWidgetEnabled($storeId = null)
     {
-        return (bool)$this->getConfigData($this::CHECKOUT_WIDGET, $storeId);
+        return (bool)$this->getConfigData(self::CHECKOUT_WIDGET, $storeId);
     }
 
     /**
@@ -271,7 +278,7 @@ class Data
      */
     public function getCustomSuccess($storeId = null)
     {
-        return (bool)$this->getConfigData($this::CUSTOM_SUCCESS, $storeId);
+        return (bool)$this->getConfigData(self::CUSTOM_SUCCESS, $storeId);
     }
 
     /**

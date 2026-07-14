@@ -5,13 +5,97 @@
 
 $viewModel = $block->getViewModel();
 $storeId = $block->getStoreId();
-if ($viewModel->getProductWidgetEnabled($storeId)) :
+$clientId = $viewModel->getClientId($storeId);
 ?>
 
+<?php if ($viewModel->getProductWidgetEnabled($storeId)) : ?>
+
+<?php $price = $block->getProduct()->getFinalPrice(); ?>
 <mo-product-page
-    product-price=<?= $escaper->escapeHtml($block->getProduct()->getFinalPrice()); ?>
-    mo-client-id=<?= $escaper->escapeHtml($viewModel->getClientId($storeId)); ?>
+    product-price=<?= $escaper->escapeHtml($price); ?>
+    mo-client-id=<?= $escaper->escapeHtml($clientId); ?>
 >
 </mo-product-page>
+
+<?php elseif ($viewModel->getNeutralProductWidgetEnabled($storeId)) :
+    $product = $block->getProduct();
+    $price = (float)$product->getPriceInfo()->getPrice('final_price')->getAmount()->getValue();
+    //Literal instead of Grouped::TYPE_CODE — referencing the class would fatal the PDP if Magento_GroupedProduct is disabled.
+    $isGrouped = $product->getTypeId() === 'grouped';
+?>
+<?php if ($price > 0 && !$isGrouped) : ?>
+
+<style>
+.powerpay-neutral-widget {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 5px;
+    margin: 10px 0 15px;
+    font-size: 14px;
+    line-height: 20px;
+}
+
+.powerpay-neutral-widget__text {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.powerpay-neutral-widget__logo {
+    display: inline-block;
+    width: 70px;
+    height: 20px;
+    vertical-align: middle;
+}
+
+.powerpay-neutral-widget__more-info {
+    display: inline-flex;
+    align-items: center;
+    color: #3b4b58;
+    text-decoration: none;
+}
+
+.powerpay-neutral-widget__more-info:hover {
+    color: #1a2833;
+}
+
+.powerpay-neutral-widget__icon {
+    display: block;
+}
+</style>
+
+<div class="powerpay-neutral-widget">
+    <span class="powerpay-neutral-widget__text">
+        <?php $installments = '<strong>' . __(
+            '%1 cuotas de %2 sin intereses',
+            $viewModel->getNeutralInstallments(),
+            $viewModel->getInstallmentAmount($price, $storeId)
+        ) . '</strong>'; ?>
+        <?= $escaper->escapeHtml(__('Paga en %1 con', $installments), ['strong']); ?>
+        <img class="powerpay-neutral-widget__logo"
+             src="<?= $escaper->escapeUrl($block->getViewFileUrl('Improntus_PowerPay::images/logo-powerpay-black.svg')); ?>"
+             alt="Powerpay" width="70" height="20"/>
+    </span>
+    <a href="#" class="powerpay-neutral-widget__more-info"
+       aria-label="<?= $escaper->escapeHtmlAttr(__('Más información')); ?>"
+       title="<?= $escaper->escapeHtmlAttr(__('Más información')); ?>"
+       data-mage-init='<?= $escaper->escapeHtmlAttr(json_encode([
+           'Improntus_PowerPay/js/offer-frame' => [
+               'clientId' => $clientId,
+               'price' => (string)$price,
+           ],
+       ])); ?>'>
+        <svg class="powerpay-neutral-widget__icon" viewBox="0 0 24 24" width="20" height="20"
+             fill="none" stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9"/>
+            <path d="M11 11h1v5"/>
+            <circle cx="12" cy="7.5" r="1.1" fill="currentColor" stroke="none"/>
+        </svg>
+    </a>
+</div>
+
+<?php endif; ?>
 
 <?php endif; ?>

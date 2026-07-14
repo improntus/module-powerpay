@@ -2,6 +2,8 @@
 namespace Improntus\PowerPay\ViewModel;
 
 use Improntus\PowerPay\Helper\Data;
+use Magento\Framework\Pricing\PriceCurrencyInterface;
+
 class Widgets implements \Magento\Framework\View\Element\Block\ArgumentInterface
 {
 
@@ -9,15 +11,26 @@ class Widgets implements \Magento\Framework\View\Element\Block\ArgumentInterface
     CONST PRODUCTION_JS_URL = 'https://components-bnpl-pe-bbva-production.moprestamo.com/cdn/dist/powerpay-components/powerpay-components.esm.js';
     CONST PRODUCTION_CSS_URL = 'https://components-bnpl-pe-bbva-production.moprestamo.com/css/config.css';
 
+    /* Installments advertised by the neutral PDP widget */
+    CONST NEUTRAL_INSTALLMENTS = 3;
+
     /**
      * @var Data
      */
     private $helper;
+
+    /**
+     * @var PriceCurrencyInterface
+     */
+    private $priceCurrency;
+
     public function __construct(
-        Data $helper
+        Data $helper,
+        PriceCurrencyInterface $priceCurrency
     )
     {
         $this->helper = $helper;
+        $this->priceCurrency = $priceCurrency;
     }
 
     /**
@@ -25,7 +38,7 @@ class Widgets implements \Magento\Framework\View\Element\Block\ArgumentInterface
      */
     public function getCssUrl()
     {
-        return $this::PRODUCTION_CSS_URL;
+        return self::PRODUCTION_CSS_URL;
     }
 
     /**
@@ -35,9 +48,9 @@ class Widgets implements \Magento\Framework\View\Element\Block\ArgumentInterface
     public function getJsUrl($storeId)
     {
         if ($this->helper->getSandbox($storeId)) {
-            return $this::SANDBOX_JS_URL;
+            return self::SANDBOX_JS_URL;
         } else {
-            return $this::PRODUCTION_JS_URL;
+            return self::PRODUCTION_JS_URL;
         }
     }
 
@@ -52,12 +65,52 @@ class Widgets implements \Magento\Framework\View\Element\Block\ArgumentInterface
 
 
     /**
+     * Powerpay's own <mo-product-page> widget.
+     *
      * @param $storeId
      * @return bool
      */
     public function getProductWidgetEnabled($storeId)
     {
-        return $this->helper->isActive() && $this->helper->getProductWidgetEnabled($storeId);
+        return $this->helper->isActive()
+            && $this->helper->getProductWidgetMode($storeId) === Data::PRODUCT_WIDGET_DEFAULT;
+    }
+
+    /**
+     * Local neutral widget (own markup + logo, modal opened via <mo-offer-frame>).
+     *
+     * @param $storeId
+     * @return bool
+     */
+    public function getNeutralProductWidgetEnabled($storeId)
+    {
+        return $this->helper->isActive()
+            && $this->helper->getProductWidgetMode($storeId) === Data::PRODUCT_WIDGET_NEUTRAL;
+    }
+
+    /**
+     * @return int
+     */
+    public function getNeutralInstallments()
+    {
+        return self::NEUTRAL_INSTALLMENTS;
+    }
+
+    /**
+     * Price of a single installment, formatted in the store currency.
+     *
+     * @param float $price
+     * @param $storeId
+     * @return string
+     */
+    public function getInstallmentAmount($price, $storeId)
+    {
+        return $this->priceCurrency->format(
+            (float)$price / self::NEUTRAL_INSTALLMENTS,
+            false,
+            PriceCurrencyInterface::DEFAULT_PRECISION,
+            $storeId
+        );
     }
 
     /**

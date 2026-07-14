@@ -48,9 +48,9 @@ class Callback implements CallbackInterface
                 $transactionCreatedAt = $data['created_at'];
                 $unhashedSignature =
                     $this->helper->getSecret($order->getStoreId()) .
-                    $this::CONCATENATOR .
+                    self::CONCATENATOR .
                     $transactionId .
-                    $this::CONCATENATOR .
+                    self::CONCATENATOR .
                     $transactionCreatedAt;
 
                 $signature = hash('sha256', $unhashedSignature);

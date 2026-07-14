@@ -109,7 +109,7 @@ class CancelOrder
             if ($expiredAt->format('Y-m-d H:i:s') < $currentTime->format('Y-m-d H:i:s')) {
                 $message = (__('Order canceled due to expiration time.'));
                 $this->powerPay->cancelOrder($order, $message);
-                $transaction->setStatus($this::EXPIRED);
+                $transaction->setStatus(self::EXPIRED);
                 $this->transactionRepository->save($transaction);
             }
         }
@@ -138,7 +138,7 @@ class CancelOrder
                 'main_table.entity_id = sop.parent_id',
                 array('method')
             )
-            ->where('sop.method = ?', $this::PAYMENT_METHOD);
+            ->where('sop.method = ?', self::PAYMENT_METHOD);
         $this->orderCollection->addFieldToFilter('status', $status);
         return $this->orderCollection;
     }
