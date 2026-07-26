@@ -1,4 +1,9 @@
 <?php
+/**
+ * @author Improntus Dev Team
+ * @copyright Copyright (c) 2026 Improntus (https://www.improntus.com/)
+ */
+
 namespace Improntus\PowerPay\Api;
 
 

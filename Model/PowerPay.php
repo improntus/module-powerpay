@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Improntus Dev Team
+ * @copyright Copyright (c) 2026 Improntus (https://www.improntus.com/)
+ */
 
 namespace Improntus\PowerPay\Model;
 
@@ -314,6 +318,99 @@ class PowerPay
         } catch (\Exception $e) {
             $this->helper->log($e->getMessage());
             return false;
+        }
+    }
+
+    /**
+     * Re-query the transaction from Powerpay to obtain the authoritative status and the
+     * amount that was actually captured.
+     *
+     * The signed webhook carries neither a trustworthy status (the signature does not cover
+     * it) nor an amount, so the paid/amount decision MUST be taken from this authenticated
+     * GET, never from the notification body.
+     *
+     * NOTE (deploy): the endpoint path (merchant-transactions/{id}) and the response field
+     * names (status, amount, currency) must be confirmed against the Powerpay API. Any
+     * unexpected or absent field is handled fail-closed by the caller (the order is flagged
+     * for manual review instead of being invoiced).
+     *
+     * @param Order $order
+     * @param string $transactionId
+     * @return array|null Decoded transaction payload, or null when the re-query is unavailable
+     */
+    public function getRemoteTransaction($order, $transactionId)
+    {
+        try {
+            $storeId = $order->getStoreId();
+            $response = $this->ws->doRequest(
+                $this->helper::EP_MERCHANT_TRANSACTIONS . '/' . rawurlencode((string)$transactionId),
+                $this->helper->getSecret($storeId),
+                null,
+                'GET',
+                $storeId
+            );
+            return is_array($response) ? $response : null;
+        } catch (\Exception $e) {
+            $this->helper->log($e->getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Reconcile the amount and currency reported by Powerpay against the order total.
+     *
+     * Powerpay settles in PEN (2 decimals) and the create request sends round(grand_total, 2),
+     * so the re-queried amount must match the order total to the cent, the order must be a PEN
+     * order, and any currency reported by Powerpay must also be PEN. Missing or invalid data is
+     * treated as a mismatch (fail closed) so an order is never invoiced on an unverified amount.
+     *
+     * NOTE (deploy): comparison assumes Powerpay returns the amount in major units (e.g. 10.99),
+     * matching what createTransaction sends. If the API returns minor units (cents), adjust here.
+     *
+     * @param Order $order
+     * @param array $remoteTransaction
+     * @return bool
+     */
+    public function isAmountReconciled($order, array $remoteTransaction)
+    {
+        if ($order->getOrderCurrencyCode() !== 'PEN') {
+            return false;
+        }
+        if (isset($remoteTransaction['currency'])
+            && strtoupper((string)$remoteTransaction['currency']) !== 'PEN') {
+            return false;
+        }
+        if (!isset($remoteTransaction['amount']) || !is_numeric($remoteTransaction['amount'])) {
+            return false;
+        }
+        $orderCents = (int)round((float)$order->getGrandTotal() * 100);
+        $remoteCents = (int)round((float)$remoteTransaction['amount'] * 100);
+        return $orderCents === $remoteCents;
+    }
+
+    /**
+     * Flag an order for manual review instead of invoicing it.
+     *
+     * Used when the payment cannot be positively verified: the amount/currency does not match
+     * the order total, or the paid status could not be confirmed via re-query. The order is
+     * moved to payment_review with an explanatory comment; it is never invoiced or cancelled here.
+     *
+     * @param Order $order
+     * @param string $reason
+     * @return void
+     */
+    public function flagForReview($order, $reason)
+    {
+        try {
+            $this->helper->log("Order {$order->getIncrementId()} flagged for review: {$reason}", 'info');
+            if ($order->canInvoice() && $order->getState() !== Order::STATE_PAYMENT_REVIEW) {
+                $order->setState(Order::STATE_PAYMENT_REVIEW);
+                $order->setStatus(Order::STATE_PAYMENT_REVIEW);
+                $order->addCommentToStatusHistory(__('Powerpay: %1', $reason), Order::STATE_PAYMENT_REVIEW);
+                $this->orderRepository->save($order);
+            }
+        } catch (\Exception $e) {
+            $this->helper->log($e->getMessage());
         }
     }
 

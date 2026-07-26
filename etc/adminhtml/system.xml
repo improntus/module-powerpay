@@ -14,6 +14,7 @@
                 <comment>
                     <![CDATA[<div class="powerpay-payment-logo"></div><div class="powerpay-payment-text">Incrementa tu conversion rate con pagos financiados por <strong>Powerpay.</strong></div>]]>
                 </comment>
+                <resource>Improntus_PowerPay::config</resource>
                 <field id="credentials_status" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1"
                        showInStore="1">
                     <label>Credentials status</label>
@@ -60,7 +61,7 @@
                 <field id="sort_order" translate="label" type="text" sortOrder="160" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Sort Order</label>
                     <frontend_class>validate-number</frontend_class>
-                    <config_path>payment/improntus_paypal/sort_order</config_path>
+                    <config_path>payment/powerpay/sort_order</config_path>
                 </field>
                 <field id="cancel_hours" translate="label" type="text" sortOrder="170" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Cancel order after X hours</label>

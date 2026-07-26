@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Improntus Dev Team
+ * @copyright Copyright (c) 2026 Improntus (https://www.improntus.com/)
+ */
 
 namespace Improntus\PowerPay\Controller\Order;
 
@@ -71,7 +75,7 @@ class Response implements ActionInterface
             $order = $this->session->getLastRealOrder();
             if (
                 !isset($result['token']) ||
-                $result['token'] !== $this->helper->generateToken($order)
+                !hash_equals($this->helper->generateToken($order), (string)$result['token'])
             ) {
                 $message = (__('Invalid Token.'));
                 $this->powerPay->cancelOrder($order, $message);

@@ -1,4 +1,9 @@
 <?php
+/**
+ * @author Improntus Dev Team
+ * @copyright Copyright (c) 2026 Improntus (https://www.improntus.com/)
+ */
+
 namespace Improntus\PowerPay\Model;
 
 use Improntus\PowerPay\Helper\Data as PowerPayHelper;
@@ -6,7 +11,6 @@ use Magento\Checkout\Model\ConfigProviderInterface;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\View\Asset\Repository as AssetRepository;
 use Magento\Store\Model\StoreManagerInterface;
-use MagePal\GmailSmtpApp\Model\Store;
 
 /**
  * Class ConfigProvider
