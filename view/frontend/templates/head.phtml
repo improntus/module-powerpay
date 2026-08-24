@@ -8,8 +8,8 @@ $storeId = $block->getStoreId();
 ?>
 <link
     rel="stylesheet"
-    href=<?= $escaper->escapeHtml($viewModel->getCssUrl()) ?>>
+    href="<?= $escaper->escapeUrl($viewModel->getCssUrl()) ?>">
 <script
     type="module"
-    src=<?= $escaper->escapeHtml($viewModel->getJsUrl($storeId)) ?>
+    src="<?= $escaper->escapeUrl($viewModel->getJsUrl($storeId)) ?>"
 ></script>

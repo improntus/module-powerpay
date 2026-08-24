@@ -1,6 +1,13 @@
 CHANGELOG
 ---------
 
+### 1.2.1 (2026-08-24)
+
+* Compatibility with Adobe Commerce and Magento Open Source 2.4.9
+* Fixed `etc/webapi.xml`: it declared the schema as a relative path to `app/code/Magento/Webapi/etc/webapi.xsd`, which does not exist on a Composer based installation. Replaced with the `urn:magento:module:Magento_Webapi:etc/webapi.xsd` URN
+* Fixed unquoted HTML attributes in `head.phtml` (`href`, `src`) and `productWidget.phtml` (`product-price`, `mo-client-id`), which broke the markup as soon as the value contained a space
+* Moved the neutral product widget inline `<style>` block to `SecureHtmlRenderer` for Content Security Policy compliance
+
 ### 1.2.0 (2026-07-14)
 
 * Added the Neutral product page widget: a local widget showing "Paga en 3 cuotas de X sin intereses" with the Powerpay logo and an info icon that opens the Powerpay financing modal
